@@ -12,7 +12,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
-import static it.unisalento.pasproject.taskmanagerservice.security.SecurityConstants.JWT_SECRET;
+import static it.unisalento.pasproject.assignmentservice.security.SecurityConstants.JWT_SECRET;
 
 @Service
 public class JwtUtilities {

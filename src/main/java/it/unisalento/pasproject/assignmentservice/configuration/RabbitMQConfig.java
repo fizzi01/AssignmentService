@@ -46,6 +46,76 @@ public class RabbitMQConfig {
     // ------  END SECURITY  ------ //
 
 
+    // ------  TASK MESSAGES  ------ //
+
+    @Value("${rabbitmq.queue.newtask.name}")
+    private String newTaskQueue;
+
+    @Value("${rabbitmq.routing.newtask.key}")
+    private String newTaskTopic;
+
+    @Value("${rabbitmq.routing.taskassignment.key}")
+    private String taskAssingmentTopic;
+
+    @Value("${rabbitmq.queue.taskassignment.name}")
+    private String taskAssignmentQueue;
+
+    @Value("${rabbitmq.queue.taskexecution.name}")
+    private String taskExecutionQueue;
+
+    @Value("${rabbitmq.routing.taskexecution.key}")
+    private String taskExecutionTopic;
+
+    // Others queue and topics for task messages ...
+
+    @Value("${rabbitmq.exchange.data.name}")
+    private String dataExchange;
+
+    @Bean
+    public Queue newTaskQueue() {
+        return new Queue(newTaskQueue);
+    }
+
+    @Bean
+    public Queue taskAssignmentQueue() {
+        return new Queue(taskAssignmentQueue);
+    }
+
+    @Bean
+    public Queue taskExecutionQueue() {
+        return new Queue(taskExecutionQueue);
+    }
+
+    @Bean
+    public TopicExchange dataExchange() {
+        return new TopicExchange(dataExchange);
+    }
+
+    @Bean
+    public Binding newTaskBinding() {
+        return BindingBuilder
+                .bind(newTaskQueue())
+                .to(dataExchange())
+                .with(newTaskTopic);
+    }
+
+    @Bean
+    public Binding taskAssignmentBinding() {
+        return BindingBuilder
+                .bind(taskAssignmentQueue())
+                .to(dataExchange())
+                .with(taskAssingmentTopic);
+    }
+
+    @Bean
+    public Binding taskExecutionBinding() {
+        return BindingBuilder
+                .bind(taskExecutionQueue())
+                .to(dataExchange())
+                .with(taskExecutionTopic);
+    }
+
+    // ------  END TASK MESSAGES  ------ //
 
 
 

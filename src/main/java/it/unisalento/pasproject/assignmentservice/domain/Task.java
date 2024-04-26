@@ -6,8 +6,10 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
+// DEVE CONTENERE SOLO LE informazioni necessarie per runnare la business logic dell'assegnazione
+// tutte le altre informazioni sono contenute altrove.
+// QUINDI deve contenere informazioni sui filtri della task e sullo stato della task
+// Un altro documento terrà traccia delle assegnazione e delle performance dei membri assegnati alle task
 @Getter
 @Setter
 @Document(collection = "task")
@@ -61,13 +63,6 @@ public class Task {
      */
     private Double minWorkingTime;
 
-
-    /**
-     * The script of code associated with the task.
-     * This should be a link to the script file and should be filled by another service.
-     */
-    private String script;
-
     /**
      * The current status of the task.
      * If true, the task is currently running. If false, the task is not currently running.
@@ -97,11 +92,10 @@ public class Task {
      * @param minComputingPower The minimum computing power that the task requires.
      * @param minEnergyConsumption The minimum energy consumption of the task.
      * @param minWorkingTime The minimum working time of the task, in seconds.
-     * @param script The script of code associated with the task.
      * @param running The current status of the task.
      * @param enabled The enabled status of the task.
      */
-    public Task(String id, @NonNull String idTask, @NonNull String emailUtente, @NonNull Double maxComputingPower, @NonNull Double taskDuration,@NonNull Double maxEnergyConsumption, Double minComputingPower, Double minEnergyConsumption, Double minWorkingTime, String script, Boolean running, Boolean enabled) {
+    public Task(String id, @NonNull String idTask, @NonNull String emailUtente, @NonNull Double maxComputingPower, @NonNull Double taskDuration,@NonNull Double maxEnergyConsumption, Double minComputingPower, Double minEnergyConsumption, Double minWorkingTime, Boolean running, Boolean enabled) {
         this.id = id;
         this.idTask = idTask;
         this.emailUtente = emailUtente;
@@ -111,7 +105,6 @@ public class Task {
         this.minComputingPower = minComputingPower;
         this.minEnergyConsumption = minEnergyConsumption;
         this.minWorkingTime = minWorkingTime;
-        this.script = script;
         this.running = running;
         this.enabled = enabled;
     }
