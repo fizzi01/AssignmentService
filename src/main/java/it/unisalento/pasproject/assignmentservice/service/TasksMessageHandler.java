@@ -1,7 +1,7 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchangeStrategy;
-import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageExchanger;
+import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchanger;
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.dto.TaskMessageDTO;
