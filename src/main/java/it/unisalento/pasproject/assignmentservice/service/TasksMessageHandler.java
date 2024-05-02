@@ -65,6 +65,8 @@ public class TasksMessageHandler {
         newTask.setIdTask(taskMessageDTO.getId());
         newTask.setEmailUtente(taskMessageDTO.getEmailUtente());
         newTask.setMaxComputingPower(taskMessageDTO.getMaxComputingPower());
+        newTask.setMaxCudaPower(taskMessageDTO.getMaxCudaPower());
+        newTask.setMinCudaPower(taskMessageDTO.getMinCudaPower());
         newTask.setMinComputingPower(taskMessageDTO.getMinComputingPower());
         newTask.setTaskDuration(taskMessageDTO.getTaskDuration());
         newTask.setMaxEnergyConsumption(taskMessageDTO.getMaxEnergyConsumption());
