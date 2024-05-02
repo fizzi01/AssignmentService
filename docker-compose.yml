@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+
+  assign-service:
+    image: openjdk:22-jdk-oracle
+    container_name: assignimage
+    ports:
+      - 8080:8080
+      - 8000:8000
+    expose:
+      - "8000"
+    depends_on:
+      - assign-db
+    networks:
+      - greenspot2-net
+    volumes:
+      - ./build/libs/AssignmentService-v0.0.2.jar:/app/app.jar
+    working_dir: /app
+    entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
+
+  assign-db:
+    image: mongo:latest
+    container_name: assigndb
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_assign:/etc/mongo
+      - mongo_assign_data:/data/db
+      - mongo_assign_config:/data/configdb
+    networks:
+      - greenspot2-net
+
+networks:
+  greenspot2-net:
+    name: greenspot2_net
+
+volumes:
+    mongo_assign:
+    mongo_assign_data:
+    mongo_assign_config:
