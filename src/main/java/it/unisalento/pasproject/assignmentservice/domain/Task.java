@@ -39,12 +39,12 @@ public class Task {
     /**
      * The maximum cuda power that the task can use.
      */
-    private double maxCudaPower;
+    private Double maxCudaPower;
 
     /**
      * The minimum cuda power that the task requires.
      */
-    private double minCudaPower;
+    private Double minCudaPower;
 
     /**
      * The expected duration of the task, in seconds.

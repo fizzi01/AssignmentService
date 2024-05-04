@@ -15,12 +15,15 @@ public class Resource {
     private int availableHours;
     private double kWh;
     private String memberEmail;
+
+    // Campi da aggiornare in base all'assegnazione
     private Boolean isAvailable;
     private String assignedUser;
-    private double tdp;
+
     private double singleCoreScore;
     private double multicoreScore;
     private double openclScore;
     private double vulkanScore;
     private double cudaScore;
+
 }

@@ -138,7 +138,7 @@ public class RabbitMQConfig {
 
     // Others queues and topics for resource messages
 
-    @Value("${rabbitmq.exchange.data.name}")
+    @Value("${rabbitmq.exchange.resource.name}")
     private String resourceDataExchange;
 
     @Bean

@@ -12,7 +12,6 @@ public class ResourceDTO {
     private String memberEmail;
     private Boolean isAvailable;
     private String assignedUser;
-    private double tdp;
     private double singleCoreScore;
     private double multicoreScore;
     private double openclScore;
