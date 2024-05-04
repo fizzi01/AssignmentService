@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 // DEVE CONTENERE SOLO LE informazioni necessarie per runnare la business logic dell'assegnazione
 // tutte le altre informazioni sono contenute altrove.
 // QUINDI deve contenere informazioni sui filtri della task e sullo stato della task
-// Un altro documento terrà traccia delle assegnazione e delle performance dei membri assegnati alle task
+// Un altro documento terrà traccia delle assegnazioni e delle performance dei membri assegnati alle task
 @Getter
 @Setter
 @Document(collection = "task")

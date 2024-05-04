@@ -86,9 +86,9 @@ public class TasksMessageHandler {
      */
     public void handleTaskAssignment(TaskMessageDTO message) {
        MessageDTO result =  messageExchanger.exchangeMessage(message, taskAssingmentTopic, dataExchange, MessageDTO.class);
-        if(result.getCode() != 200) {
-            throw new RuntimeException("Error in sending the message");
-        }
+       if(result.getCode() != 200) {
+           throw new RuntimeException("Error in sending the message");
+       }
     }
 
     /**

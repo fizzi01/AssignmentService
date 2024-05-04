@@ -1,13 +1,11 @@
-version: "3.8"
-
 services:
 
   assign-service:
     image: openjdk:22-jdk-oracle
     container_name: assignimage
     ports:
-      - 8080:8080
-      - 8000:8000
+      - "8084:8080"
+      - "8004:8000"
     expose:
       - "8000"
     depends_on:
@@ -23,7 +21,7 @@ services:
     image: mongo:latest
     container_name: assigndb
     ports:
-      - 27017:27017
+      - "27020:27017"
     volumes:
       - mongo_assign:/etc/mongo
       - mongo_assign_data:/data/db

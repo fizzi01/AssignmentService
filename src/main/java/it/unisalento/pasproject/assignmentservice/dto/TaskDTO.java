@@ -1,6 +1,5 @@
 package it.unisalento.pasproject.assignmentservice.dto;
 
-import com.mongodb.lang.NonNull;
 import lombok.Getter;
 import lombok.Setter;
 
