@@ -44,7 +44,7 @@ public class ResourceAllocator {
     }
 
     public boolean isSuitableResource(Task task, Resource resource,double currentComputingPower) {
-        Double actualComputationalPower = getComputationalPower(resource);
+        double actualComputationalPower = getComputationalPower(resource);
 
 
         // Verifica se la risorsa è disponibile
@@ -73,6 +73,8 @@ public class ResourceAllocator {
         }
 
         // Assicurarsi che la durata della task sia supportata dalle ore disponibili della risorsa
-        return resource.getAvailableHours() * 3600 >= task.getTaskDuration();
+        // TODO: MODIFICARE ALGORITMO PER CONSIDERARE AVAILABILITY
+        // return resource.getAvailableHours() * 3600 >= task.getTaskDuration();
+        return 3600 >= task.getTaskDuration();
     }
 }

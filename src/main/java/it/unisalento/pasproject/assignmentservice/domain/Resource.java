@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Document(collection = "resource")
@@ -12,7 +14,7 @@ public class Resource {
     @Id
     private String id;
     private String idResource;
-    private int availableHours;
+    private List<Availability> availability;
     private double kWh;
     private String memberEmail;
 

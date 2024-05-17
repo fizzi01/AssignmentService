@@ -10,12 +10,11 @@ import java.util.Optional;
 @Service
 public class ResourceService {
 
-
     public Resource getResource(ResourceMessageDTO resourceMessageDTO) {
         Resource resource = new Resource();
 
         Optional.ofNullable(resourceMessageDTO.getId()).ifPresent(resource::setId);
-        Optional.of(resourceMessageDTO.getAvailableHours()).ifPresent(resource::setAvailableHours);
+        Optional.ofNullable(resourceMessageDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceMessageDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceMessageDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
         Optional.ofNullable(resourceMessageDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
@@ -31,7 +30,7 @@ public class ResourceService {
     public ResourceDTO getResourceDTO(Resource resource) {
         ResourceDTO resourceDTO = new ResourceDTO();
         Optional.ofNullable(resource.getId()).ifPresent(resourceDTO::setId);
-        Optional.of(resource.getAvailableHours()).ifPresent(resourceDTO::setAvailableHours);
+        Optional.ofNullable(resource.getAvailability()).ifPresent(resourceDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceDTO::setMemberEmail);
         Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceDTO::setIsAvailable);

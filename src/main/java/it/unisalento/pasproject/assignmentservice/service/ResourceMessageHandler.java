@@ -5,6 +5,8 @@ import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.ResourceMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,7 @@ public class ResourceMessageHandler {
     private final ResourceService resourceService;
     private final MessageExchanger messageExchanger;
     private final ResourceRepository resourceRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMessageHandler.class);
 
     @Autowired
     public ResourceMessageHandler(ResourceRepository resourceRepository, MessageExchanger messageExchanger, ResourceService resourceService) {
