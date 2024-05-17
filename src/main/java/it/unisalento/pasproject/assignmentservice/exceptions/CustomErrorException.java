@@ -16,7 +16,7 @@ public abstract class CustomErrorException extends RuntimeException {
         this.errorResponse = CustomErrorResponse.builder()
                 .status(status)
                 .message(message)
-                .timestamp(OffsetDateTime.now())
+                .timestamp(OffsetDateTime.now().toString())
                 .traceId(UUID.randomUUID().toString())
                 .build();
     }
