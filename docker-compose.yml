@@ -6,8 +6,6 @@ services:
     ports:
       - "${SERVICE_PORT1}:8080"
       - "${SERVICE_PORT2}:8000"
-    expose:
-      - "8000"
     depends_on:
       - assign-db
     env_file:
