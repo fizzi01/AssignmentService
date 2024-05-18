@@ -3,7 +3,7 @@ package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchangeStrategy;
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchanger;
-import it.unisalento.pasproject.assignmentservice.dto.UserDetailsDTO;
+import it.unisalento.pasproject.assignmentservice.security.UserDetailsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import static it.unisalento.pasproject.assignmentservice.security.SecurityConsta
 
 @Service
 public class UserCheckService {
+
     private final MessageExchanger messageExchanger;
 
     @Value("${rabbitmq.exchange.security.name}")
@@ -26,13 +27,13 @@ public class UserCheckService {
     @Value("${rabbitmq.routing.security.key}")
     private String securityRequestRoutingKey;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserCheckService.class);
-
     @Autowired
     public UserCheckService(MessageExchanger messageExchanger, @Qualifier("RabbitMQExchange") MessageExchangeStrategy messageExchangeStrategy) {
         this.messageExchanger = messageExchanger;
         this.messageExchanger.setStrategy(messageExchangeStrategy);
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserCheckService.class);
 
 
     public UserDetailsDTO loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -48,6 +49,7 @@ public class UserCheckService {
 
         return user;
     }
+
 
     public Boolean isEnable(Boolean enable) {
         return enable;
@@ -70,5 +72,4 @@ public class UserCheckService {
         String currentRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
         return currentRole.equalsIgnoreCase(ROLE_ADMIN);
     }
-
 }

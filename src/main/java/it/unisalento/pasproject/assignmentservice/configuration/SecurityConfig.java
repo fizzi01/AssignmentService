@@ -37,6 +37,7 @@ public class SecurityConfig {
         // Configurazione gestione eccezioni, adatta la gestione eccezioni al Servlet (carica prima degli altri componenti)
         http.addFilterBefore(exceptionFilter(), UsernamePasswordAuthenticationFilter.class);
 
+
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -56,4 +57,5 @@ public class SecurityConfig {
     public ExceptionFilter exceptionFilter() {
         return new ExceptionFilter();
     }
+
 }

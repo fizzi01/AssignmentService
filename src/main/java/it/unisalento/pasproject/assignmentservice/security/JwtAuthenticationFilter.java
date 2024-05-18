@@ -1,6 +1,6 @@
 package it.unisalento.pasproject.assignmentservice.security;
 
-import it.unisalento.pasproject.assignmentservice.dto.UserDetailsDTO;
+
 import it.unisalento.pasproject.assignmentservice.exceptions.AccessDeniedException;
 import it.unisalento.pasproject.assignmentservice.exceptions.UserNotAuthorizedException;
 import it.unisalento.pasproject.assignmentservice.service.UserCheckService;
@@ -14,12 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Service
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -30,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+            throws ServletException, IOException, UserNotAuthorizedException {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
@@ -45,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             throw new AccessDeniedException("Invalid token");
         }
+
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsDTO user = this.userCheckService.loadUserByUsername(username);

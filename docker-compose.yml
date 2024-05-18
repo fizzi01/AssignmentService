@@ -10,10 +10,12 @@ services:
       - "8000"
     depends_on:
       - assign-db
+    env_file:
+      - .env
     networks:
       - greenspot2-net
     volumes:
-      - ./build/libs/AssignmentService-v0.0.5.jar:/app/app.jar
+      - ./build/libs/AssignmentService-v1.0.2.jar:/app/app.jar
     working_dir: /app
     entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
 
