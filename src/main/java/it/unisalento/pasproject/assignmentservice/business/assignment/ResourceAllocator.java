@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.assignmentservice.business.io;
+package it.unisalento.pasproject.assignmentservice.business.assignment;
 
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
