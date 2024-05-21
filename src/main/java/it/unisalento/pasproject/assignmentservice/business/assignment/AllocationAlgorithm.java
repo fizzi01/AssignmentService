@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.assignmentservice.business.io;
+package it.unisalento.pasproject.assignmentservice.business.assignment;
 
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ResourceAllocator {
+public class AllocationAlgorithm {
 
     public void assignResources(List<Task> tasks, List<Resource> resources) {
         for (Task task : tasks) {

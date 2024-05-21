@@ -1,6 +1,6 @@
 package it.unisalento.pasproject.assignmentservice;
 
-import it.unisalento.pasproject.assignmentservice.business.io.ResourceAllocator;
+import it.unisalento.pasproject.assignmentservice.business.assignment.AllocationAlgorithm;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ public class AllocatorTest {
 
     @BeforeEach
     void setUp() {
-        ResourceAllocator resourceAllocator = new ResourceAllocator();
+        AllocationAlgorithm allocationAlgorithm = new AllocationAlgorithm();
 
         Task task1 = new Task();
         task1.setId("T001");
@@ -52,7 +52,7 @@ public class AllocatorTest {
         Resource resource = new Resource();
 
         resource.setIdResource("44");
-        resource.setAvailableHours(2);
+        //resource.setAvailableHours(2);
         resource.setKWh(10);
         resource.setMemberEmail("mirko@gmail.com");
         resource.setIsAvailable(true);
@@ -65,7 +65,7 @@ public class AllocatorTest {
 
         Resource resource2 = new Resource();
         resource2.setIdResource("11");
-        resource2.setAvailableHours(3);
+        //resource2.setAvailableHours(3);
         resource2.setKWh(20);
         resource2.setMemberEmail("mirko@gmail.com");
         resource2.setIsAvailable(true);
@@ -78,7 +78,7 @@ public class AllocatorTest {
 
         Resource resource3 = new Resource();
         resource3.setIdResource("22");
-        resource3.setAvailableHours(4);
+        //resource3.setAvailableHours(4);
         resource3.setKWh(130);
         resource3.setMemberEmail("mirko@gmail.com");
         resource3.setIsAvailable(true);
@@ -91,7 +91,7 @@ public class AllocatorTest {
 
         Resource resource4 = new Resource();
         resource4.setIdResource("33");
-        resource4.setAvailableHours(5);
+        //resource4.setAvailableHours(5);
         resource4.setKWh(100);
         resource4.setMemberEmail("mirko@gmail.com");
         resource4.setIsAvailable(true);
@@ -104,7 +104,7 @@ public class AllocatorTest {
 
         List<Task> tasks = Arrays.asList(task1, task2);
         resources = Arrays.asList(resource, resource2, resource3, resource4).reversed();
-        resourceAllocator.assignResources(tasks,resources);
+        allocationAlgorithm.assignResources(tasks,resources);
 
         System.out.println("Tasks: " + tasks);
     }

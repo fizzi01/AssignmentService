@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -74,6 +75,15 @@ public class TasksMessageHandler {
         newTask.setMinWorkingTime(taskMessageDTO.getMinWorkingTime());
         newTask.setRunning(taskMessageDTO.getRunning());
         newTask.setEnabled(taskMessageDTO.getEnabled());
+
+        if (newTask.getEnabled() && newTask.getRunning()) {
+            if (newTask.getStartTime() == null) {
+                newTask.setStartTime(LocalDateTime.now());
+                newTask.setEndTime(newTask.getStartTime().plusSeconds(newTask.getTaskDuration().longValue()));
+            }
+        } else {
+            newTask.setStartTime(null);
+        }
 
         taskRepository.save(newTask);
     }

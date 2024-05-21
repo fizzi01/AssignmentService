@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Document(collection = "assignedMember")
@@ -23,15 +25,8 @@ public class AssignedMember {
     private double assignedEnergyConsumptionPerHour;
     private long assignedWorkingTimeInSeconds;
 
-    public AssignedMember() {
-    }
+    private LocalDateTime assignedTime;
+    private LocalDateTime completedTime; //Calcolato a partire dall'assigned + il tempo di utilizzo max della risorsa
 
-    public AssignedMember(String id,@NonNull String memberId,@NonNull String hardwareId, int assignedComputingPower, double assignedEnergyConsumptionPerHour, long assignedWorkingTimeInSeconds) {
-        this.id = id;
-        this.memberId = memberId;
-        this.hardwareId = hardwareId;
-        this.assignedComputingPower = assignedComputingPower;
-        this.assignedEnergyConsumptionPerHour = assignedEnergyConsumptionPerHour;
-        this.assignedWorkingTimeInSeconds = assignedWorkingTimeInSeconds;
-    }
+
 }
