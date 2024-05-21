@@ -72,7 +72,7 @@ jobs:
 
       - name: Deploy
         run: |
-          if  [ "$DEPLOY" != 1  ]; then
+          if  [ "$DEPLOY" != 2  ]; then
             echo "Skipping deployment due to missing requirements"
             exit 0
           fi
