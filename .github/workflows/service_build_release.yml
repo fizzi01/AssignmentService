@@ -170,7 +170,7 @@ jobs:
 
       - name: Save Changelog to File
         run: |
-          echo "${{ needs.prepare_release.outputs.changelog }}" > changelog.md
+          echo "${{ needs.prepare_release.outputs.changelog }}" | sed '/- PR: #0/d' > changelog.md
           cat changelog.md
         id: save_changelog
 
