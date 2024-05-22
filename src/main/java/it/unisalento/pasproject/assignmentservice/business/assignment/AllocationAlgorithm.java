@@ -70,10 +70,7 @@ public class AllocationAlgorithm {
         if ((task.getMaxCudaPower() != null && task.getMaxCudaPower() != 0.0) && resource.getCudaScore() > task.getMaxCudaPower()) {
             return false;
         }
-
-        // Assicurarsi che la durata della task sia supportata dalle ore disponibili della risorsa
-        // TODO: MODIFICARE ALGORITMO PER CONSIDERARE AVAILABILITY
-        // return resource.getAvailableHours() * 3600 >= task.getTaskDuration();
+        
         return 3600 >= task.getTaskDuration();
     }
 }

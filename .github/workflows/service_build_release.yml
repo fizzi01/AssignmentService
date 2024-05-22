@@ -56,6 +56,7 @@ jobs:
     outputs:
       new-tag: ${{ steps.new_version.outputs.NEW_TAG }}
       tag-message: ${{ steps.commit_messages.outputs.commit_messages }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -177,7 +178,7 @@ jobs:
     name: Deploy Service
     permissions: write-all
     environment: aws
-    needs: build
+    needs: [build, prepare_release]
     runs-on: ubuntu-latest
     env:
       SSH_USER: ${{ secrets.SSH_USER }}
