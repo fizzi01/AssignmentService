@@ -16,5 +16,6 @@
       "pattern": "^(.*)$",
       "target": "$1"
     }
-  ]
+  ],
+  "pr_template": ""
 }
