@@ -168,12 +168,18 @@ jobs:
           mv *.jar ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}-${{  needs.prepare_release.outputs.new-tag }}.jar
           ls -l
 
+      - name: Save Changelog to File
+        run: |
+          echo "${{ steps.changelog.outputs.changelog }}" > changelog.md
+          cat changelog.md
+        id: save_changelog
+
       - name: Creating Release
         uses: ncipollo/release-action@v1.14.0
         with:
           tag: ${{ needs.prepare_release.outputs.new-tag }}
           name: Release ${{ needs.prepare_release.outputs.new-tag }}
-          body: ${{ steps.changelog.outputs.changelog }}
+          bodyFile: changelog.md
           makeLatest: "latest"
           artifacts: |
             *.jar
