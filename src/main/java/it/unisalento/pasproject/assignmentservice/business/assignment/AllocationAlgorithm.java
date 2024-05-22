@@ -46,7 +46,6 @@ public class AllocationAlgorithm {
     public boolean isSuitableResource(Task task, Resource resource,double currentComputingPower) {
         double actualComputationalPower = getComputationalPower(resource);
 
-
         // Verifica se la risorsa è disponibile
         if (!resource.getIsAvailable()) {
             return false;

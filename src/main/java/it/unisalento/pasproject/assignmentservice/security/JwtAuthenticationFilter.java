@@ -34,11 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
+        String role = null;
 
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
                 username = jwtUtilities.extractUsername(jwt);
+                role = jwtUtilities.extractRole(jwt);
             }else {
                 throw new AccessDeniedException("Missing token");
             }
@@ -47,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsDTO user = this.userCheckService.loadUserByUsername(username);
             UserDetails userDetails = User.builder()
                     .username(user.getEmail()) // Assume email is username
@@ -55,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .authorities(user.getRole()) // Set roles or authorities from the UserDetailsDTO
                     .build();
 
-            if (jwtUtilities.validateToken(jwt, userDetails) && userCheckService.isEnable(user.getEnabled())) {
+            if (jwtUtilities.validateToken(jwt, userDetails, user.getRole()) && userCheckService.isEnable(user.getEnabled())) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

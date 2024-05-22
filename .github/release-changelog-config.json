@@ -1,0 +1,14 @@
+{
+  "template": "${{CHANGELOG}}",
+  "categories": [
+    { "title": "� Enhancements", "labels": ["enhancement"] },
+    { "title": "� Bug Fixes", "labels": ["bug"] },
+    { "title": "� Maintenance", "labels": ["chore"] },
+    { "title": "� Other Changes", "labels": [] }
+  ],
+  "sort": "ASC",
+  "max_tags_to_fetch": 10,
+  "max_pull_requests": 50,
+  "max_issues": 50,
+  "include_unlabeled": true
+}

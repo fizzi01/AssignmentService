@@ -95,6 +95,12 @@ jobs:
           new_version="$major.$minor.$patch"
           echo "NEW_TAG=$new_version" >> $GITHUB_ENV
           echo "NEW_TAG=$new_version" >> $GITHUB_OUTPUT
+
+      - name: Create and push new tag
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.NEW_TAG }}
     
 
       - name: Update build.gradle
@@ -124,6 +130,16 @@ jobs:
           git commit -m "Update build.gradle & docker-compose to ${{ env.NEW_TAG }}"
           git push
 
+      - name: Generate Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v2
+        with:
+          configuration: .github/release-changelog-config.json
+          fromTag: ${{ env.REAL_OLD_TAG }}
+          toTag: ${{ env.NEW_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   release:
     name: Release Service
     needs: prepare_release
@@ -146,14 +162,16 @@ jobs:
           ls -l
 
       - name: Creating Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: ncipollo/release-action@v1.14.0
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: "latest"
-          title: "Release ${{  needs.prepare_release.outputs.new-tag }}"
-          files: |
+          tag: ${{ needs.prepare_release.outputs.new-tag }}
+          name: Release ${{ needs.prepare_release.outputs.new-tag }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          makeLatest: "latest"
+          artifacts: |
             *.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     name: Deploy Service
