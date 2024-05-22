@@ -11,10 +11,9 @@ import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AllocationService {
@@ -41,8 +40,21 @@ public class AllocationService {
     }
 
     public List<Resource> getAvailableResources() {
-        //TODO: Filtra in basa all'availibity
-        return resourceRepository.findByIsAvailableTrue();
+        //TODO: Vedere se funziona
+        DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
+        LocalTime currentTime = LocalTime.now();
+
+        List<Resource> availableResources = resourceRepository.findByIsAvailableTrue();
+
+        availableResources = availableResources.stream()
+                .filter(resource -> resource.getAvailability().stream()
+                        .anyMatch(availability -> (
+                                availability.getDayOfWeek().equals(currentDay) &&
+                                !currentTime.isBefore(availability.getStartTime()) &&
+                                !currentTime.isAfter(availability.getEndTime()))))
+                .collect(Collectors.toList());
+
+        return availableResources;
     }
 
     public List<Task> getRunningTasks() {

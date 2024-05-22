@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import it.unisalento.pasproject.assignmentservice.domain.Availability;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class AvailabilityDeserializer extends JsonDeserializer<List<Availability
 
                 var dayOfWeekString = node.get("dayOfWeek").asText();
                 if (!dayOfWeekString.isEmpty()) {
-                    availability.setDayOfWeek(Availability.DayOfWeek.valueOf(dayOfWeekString.toUpperCase()));
+                    availability.setDayOfWeek(DayOfWeek.valueOf(dayOfWeekString.toUpperCase()));
                 }
 
                 var startTimeString = node.get("startTime").asText();

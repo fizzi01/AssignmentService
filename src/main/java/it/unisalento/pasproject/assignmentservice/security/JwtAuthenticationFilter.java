@@ -52,8 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsDTO user = this.userCheckService.loadUserByUsername(username);
 
-            String userEmail = null;
-            String userRole = null;
+            String userEmail;
+            String userRole;
 
             // Se token valido e risposta del cqrs null, si assume che l'utente sia l'email del token
             if (user == null){
@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .authorities(userRole) // Set roles or authorities from the UserDetailsDTO
                     .build();
 
-            if (jwtUtilities.validateToken(jwt, userDetails, user.getRole()) && userCheckService.isEnable(user.getEnabled())) {
+            if (jwtUtilities.validateToken(jwt, userDetails, userRole) && userCheckService.isEnable(user.getEnabled())) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
