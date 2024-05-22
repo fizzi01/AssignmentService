@@ -39,6 +39,7 @@ public class AllocationService {
     }
 
     public List<Resource> getAvailableResources() {
+        //TODO: Filtra in basa all'availibity
         return resourceRepository.findByIsAvailableTrue();
     }
 

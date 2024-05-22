@@ -20,7 +20,7 @@ public class AllocationAlgorithm {
                     if (isSuitableResource(task, resource, totalComputingPower)) {
                         // Assegna la risorsa alla task
                         resource.setIsAvailable(false);
-                        resource.setAssignedUser(task.getEmailUtente());
+                        resource.setCurrentTaskId(task.getId());
                         assignedResources.add(resource);
                         totalComputingPower += getComputationalPower(resource);
 

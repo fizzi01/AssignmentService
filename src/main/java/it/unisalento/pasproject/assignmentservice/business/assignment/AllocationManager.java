@@ -35,7 +35,7 @@ public class AllocationManager {
         //Prende tutte le risorse disponibili
         List<Resource> resources = allocationService.getAvailableResources();
 
-        allocationAlgorithm.assignResources(null, null);
+        allocationAlgorithm.assignResources(tasks, resources);
     }
 
 
