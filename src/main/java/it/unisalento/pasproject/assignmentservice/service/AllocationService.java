@@ -1,9 +1,6 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
-import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
-import it.unisalento.pasproject.assignmentservice.domain.Resource;
-import it.unisalento.pasproject.assignmentservice.domain.Task;
-import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
+import it.unisalento.pasproject.assignmentservice.domain.*;
 import it.unisalento.pasproject.assignmentservice.repositories.AssignedResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskAssignmentRepository;
@@ -75,6 +72,9 @@ public class AllocationService {
 
             Resource resource = resourceRepository.findById(assigned.getHardwareId()).orElseThrow();
 
+            if ( assigned.getCompletedTime() == null) //Risorsa non ancora avviata
+                continue;
+
             if ( now.isAfter(assigned.getCompletedTime()) ) {
 
                 if ( !assigned.isHasCompleted() ) {
@@ -127,4 +127,58 @@ public class AllocationService {
         taskAssignment.setCompletedTime(LocalDateTime.now());
         taskAssignmentRepository.save(taskAssignment);
     }
+
+    public TaskAssignment getTaskAssignment(Task task){
+        TaskAssignment assignment =  taskAssignmentRepository.findByIdTask(task.getId());
+
+        if ( assignment == null ) {
+            assignment = new TaskAssignment();
+            assignment.setIdTask(task.getId());
+            assignment.setIsComplete(false);
+            assignment.setAssignedResources(List.of());
+            taskAssignmentRepository.save(assignment);
+        }
+
+        return assignment;
+    }
+
+    public TaskAssignment updateTaskAssignment(TaskAssignment taskAssignment){
+        return taskAssignmentRepository.save(taskAssignment);
+    }
+
+
+    public void updateResource(Resource resource) {
+        resourceRepository.save(resource);
+    }
+
+    public AssignedResource assignResource(Resource resource){
+
+        DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
+        LocalTime currentTime = LocalTime.now();
+
+        Availability availability = resource.getAvailability().stream()
+                .filter(availability1 -> availability1.getDayOfWeek().equals(currentDay) &&
+                        !currentTime.isBefore(availability1.getStartTime()) &&
+                        !currentTime.isAfter(availability1.getEndTime()))
+                .findFirst().orElseThrow();
+
+
+
+        AssignedResource assignedResource = new AssignedResource();
+
+        assignedResource.setAssignedSingleScore(resource.getSingleCoreScore());
+        assignedResource.setAssignedMultiScore(resource.getMulticoreScore());
+        assignedResource.setAssignedOpenclScore(resource.getOpenclScore());
+        assignedResource.setAssignedVulkanScore(resource.getVulkanScore());
+        assignedResource.setAssignedCudaScore(resource.getCudaScore());
+        assignedResource.setAssignedEnergyConsumptionPerHour(resource.getKWh());
+
+        assignedResource.setHardwareId(resource.getId());
+        assignedResource.setAssignedWorkingTimeInSeconds(availability.getEndTime().toSecondOfDay() - currentTime.toSecondOfDay());
+        assignedResource.setHasCompleted(false);
+
+        return assignedMemberRepository.save(assignedResource);
+    }
+
+
 }

@@ -25,8 +25,10 @@ public class AllocationManager {
         this.allocationService = allocationService;
     }
 
-
-    //TODO: @Scheduled(fixedRate = 60000) // esegue ogni minuto
+    /**
+     * This method is called every minute and assigns the tasks to the resources
+     */
+    @Scheduled(fixedRate = 60000) // esegue ogni minuto
     public void runAllocator() {
 
         //Prende tutte le Task che sono in running e che sono enabled

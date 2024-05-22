@@ -34,11 +34,13 @@ public class AssignmentWatcher {
             if (isTaskExpired(task)) {
                 //Completa la task
                 task.setRunning(false);
+                task.setEndTime(LocalDateTime.now());
                 allocationService.updateTask(task);
                 deallocateResources(task);
             }else if (allResourcesFinished(task)) {
                 //Completa la task
                 task.setRunning(false);
+                task.setEndTime(LocalDateTime.now());
                 allocationService.updateTask(task);
                 allocationService.completeTaskAssignment(task);
             }
@@ -71,6 +73,11 @@ public class AssignmentWatcher {
      */
     private boolean isResourceCompleted(AssignedResource member) {
         LocalDateTime now = LocalDateTime.now();
+
+        if (member.getCompletedTime() == null){
+            return false;
+        }
+
         return now.isAfter(member.getCompletedTime()) || member.isHasCompleted();
     }
 
