@@ -51,10 +51,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsDTO user = this.userCheckService.loadUserByUsername(username);
+
+            String userEmail = null;
+            String userRole = null;
+
+            // Se token valido e risposta del cqrs null, si assume che l'utente sia l'email del token
+            if (user == null){
+                userEmail = username;
+                userRole = role;
+            }else {
+                userEmail = user.getEmail();
+                userRole = user.getRole();
+            }
+
             UserDetails userDetails = User.builder()
-                    .username(user.getEmail()) // Assume email is username
+                    .username(userEmail) // Assume email is username
                     .password("") // Password field is not used in JWT authentication
-                    .authorities(user.getRole()) // Set roles or authorities from the UserDetailsDTO
+                    .authorities(userRole) // Set roles or authorities from the UserDetailsDTO
                     .build();
 
             if (jwtUtilities.validateToken(jwt, userDetails, user.getRole()) && userCheckService.isEnable(user.getEnabled())) {
