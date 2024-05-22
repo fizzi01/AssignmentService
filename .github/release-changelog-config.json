@@ -4,7 +4,7 @@
     { "title": "� Enhancements", "labels": ["enhancement"] },
     { "title": "� Bug Fixes", "labels": ["bug"] },
     { "title": "� Maintenance", "labels": ["chore"] },
-    { "title": "� Other Changes", "labels": [] }
+    { "title": "Changes", "labels": [] }
   ],
   "sort": "ASC",
   "max_tags_to_fetch": 10,
