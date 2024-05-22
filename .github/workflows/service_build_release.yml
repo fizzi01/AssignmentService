@@ -135,6 +135,7 @@ jobs:
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v2
         with:
+          commitMode: true
           configuration: .github/release-changelog-config.json
           fromTag: ${{ env.REAL_OLD_TAG }}
           toTag: ${{ env.NEW_TAG }}
