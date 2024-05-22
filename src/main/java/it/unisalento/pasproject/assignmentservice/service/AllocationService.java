@@ -1,10 +1,10 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
-import it.unisalento.pasproject.assignmentservice.domain.AssignedMember;
+import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
-import it.unisalento.pasproject.assignmentservice.repositories.AssignedMemberRepository;
+import it.unisalento.pasproject.assignmentservice.repositories.AssignedResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskAssignmentRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
@@ -20,10 +20,10 @@ public class AllocationService {
     private final TaskRepository taskRepository;
     private final TaskAssignmentRepository taskAssignmentRepository;
     private final ResourceRepository resourceRepository;
-    private final AssignedMemberRepository assignedMemberRepository;
+    private final AssignedResourceRepository assignedMemberRepository;
 
     @Autowired
-    public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository, ResourceRepository resourceRepository, AssignedMemberRepository assignedMemberRepository) {
+    public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository, ResourceRepository resourceRepository, AssignedResourceRepository assignedMemberRepository) {
         this.taskRepository = taskRepository;
         this.taskAssignmentRepository = taskAssignmentRepository;
         this.resourceRepository = resourceRepository;
@@ -56,41 +56,43 @@ public class AllocationService {
         LocalDateTime now = LocalDateTime.now();
 
         //Prendo le risorse allocate per il task e le dealloco
-        for (AssignedMember member : taskAssignment.getAssignedMembers()) {
-            if ( now.isAfter(member.getCompletedTime()) ) {
+        for (AssignedResource assigned : taskAssignment.getAssignedResources()) {
 
-                Resource resource = resourceRepository.findById(member.getHardwareId()).orElseThrow();
-                if ( resource.getIsAvailable() ){
-                    resource.setIsAvailable(true);
-                    resourceRepository.save(resource);
-                } else {
-                    continue;
+            Resource resource = resourceRepository.findById(assigned.getHardwareId()).orElseThrow();
+
+            if ( now.isAfter(assigned.getCompletedTime()) ) {
+
+                if ( !assigned.isHasCompleted() ) {
+                    assigned.setHasCompleted(true);
                 }
 
+
             } else {
-                member.setCompletedTime(now);
-                assignedMemberRepository.save(member);
+                assigned.setCompletedTime(now);
+                assigned.setHasCompleted(true);
             }
 
-            Resource resource = resourceRepository.findById(member.getHardwareId()).orElseThrow();
-            resource.setIsAvailable(true);
-            resource.setAssignedUser(null);
-            resource.setCurrentTask(null);
+            assignedMemberRepository.save(assigned);
+
+            if ( !resource.getIsAvailable() ){
+                resource.setIsAvailable(true);
+                resource.setCurrentTaskId(null);
+            }
+
             resourceRepository.save(resource);
         }
 
     }
 
-    public List<AssignedMember> getAssignedMembers() {
+    public List<AssignedResource> getAssignedMembers() {
         //Restituisce gli assigned member che hanno completedTime > now
         return assignedMemberRepository.findByCompletedTimeAfter(LocalDateTime.now());
     }
 
-    public void deallocateResource(AssignedMember member) {
+    public void deallocateResource(AssignedResource member) {
         Resource resource = resourceRepository.findById(member.getHardwareId()).orElseThrow();
         resource.setIsAvailable(true);
-        resource.setAssignedUser(null);
-        resource.setCurrentTask(null);
+        resource.setCurrentTaskId(null);
         resourceRepository.save(resource);
     }
 

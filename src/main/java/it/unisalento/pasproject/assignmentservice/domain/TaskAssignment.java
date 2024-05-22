@@ -19,7 +19,7 @@ public class TaskAssignment {
     @NonNull
     private String idTask;
 
-    private List<AssignedMember> assignedMembers;
+    private List<AssignedResource> assignedResources;
 
     //Va aggiornato quando tutti i membri hanno completato il task
     private Boolean isComplete;

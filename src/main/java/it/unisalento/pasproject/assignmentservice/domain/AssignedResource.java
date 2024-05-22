@@ -11,13 +11,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Document(collection = "assignedMember")
-public class AssignedMember {
+public class AssignedResource {
     @Id
     private String id;
 
-    @NonNull
-    private String memberId;
-    @NonNull
     private String hardwareId;
 
     //TODO: DA SINCRONIZZARE CON I MEMBRI
@@ -27,6 +24,6 @@ public class AssignedMember {
 
     private LocalDateTime assignedTime;
     private LocalDateTime completedTime; //Calcolato a partire dall'assigned + il tempo di utilizzo max della risorsa
-
+    private boolean hasCompleted;
 
 }

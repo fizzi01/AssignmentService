@@ -1,6 +1,6 @@
 package it.unisalento.pasproject.assignmentservice.business.assignment;
 
-import it.unisalento.pasproject.assignmentservice.domain.AssignedMember;
+import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -69,9 +69,9 @@ public class AssignmentWatcher {
      * @param member the member to check
      * @return true if the resource is completed, false otherwise
      */
-    private boolean isResourceCompleted(AssignedMember member) {
+    private boolean isResourceCompleted(AssignedResource member) {
         LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(member.getCompletedTime());
+        return now.isAfter(member.getCompletedTime()) || member.isHasCompleted();
     }
 
 

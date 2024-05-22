@@ -20,8 +20,7 @@ public class Resource {
 
     // Campi da aggiornare in base all'assegnazione
     private Boolean isAvailable;
-    private String assignedUser;
-    private String currentTask;
+    private String currentTaskId;
 
     private double singleCoreScore;
     private double multicoreScore;
