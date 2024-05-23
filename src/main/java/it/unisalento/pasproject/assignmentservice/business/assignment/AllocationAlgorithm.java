@@ -39,6 +39,11 @@ public class AllocationAlgorithm {
 
             for (Resource resource : resources) {
 
+                //Non considera più le task già assegnate
+                if ( isAlreadyAssigned(taskAssignment.getAssignedResources(),resource)){
+                    continue;
+                }
+
                 // Verifichiamo che si siano raggiunti i limiti di potenza computazionale
                 if ( task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0 ) {
                     return;
@@ -67,6 +72,11 @@ public class AllocationAlgorithm {
                 }
             }
         }
+    }
+
+
+    public static boolean isAlreadyAssigned(List<AssignedResource> assignedResourceList,Resource resource) {
+        return assignedResourceList.contains(resource);
     }
 
     public static double getCurrentComputingPower(List<AssignedResource> assignedResources) {

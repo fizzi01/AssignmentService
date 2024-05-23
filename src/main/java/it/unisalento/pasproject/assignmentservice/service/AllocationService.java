@@ -18,14 +18,14 @@ public class AllocationService {
     private final TaskRepository taskRepository;
     private final TaskAssignmentRepository taskAssignmentRepository;
     private final ResourceRepository resourceRepository;
-    private final AssignedResourceRepository assignedMemberRepository;
+    private final AssignedResourceRepository assignedResourceRepository;
 
     @Autowired
     public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository, ResourceRepository resourceRepository, AssignedResourceRepository assignedMemberRepository) {
         this.taskRepository = taskRepository;
         this.taskAssignmentRepository = taskAssignmentRepository;
         this.resourceRepository = resourceRepository;
-        this.assignedMemberRepository = assignedMemberRepository;
+        this.assignedResourceRepository = assignedMemberRepository;
     }
 
     public List<Task> getAvailableTasks() {
@@ -87,7 +87,7 @@ public class AllocationService {
                 assigned.setHasCompleted(true);
             }
 
-            assignedMemberRepository.save(assigned);
+            assignedResourceRepository.save(assigned);
 
             if ( !resource.getIsAvailable() ){
                 resource.setIsAvailable(true);
@@ -101,7 +101,7 @@ public class AllocationService {
 
     public List<AssignedResource> getAssignedMembers() {
         //Restituisce gli assigned member che hanno completedTime > now
-        return assignedMemberRepository.findByCompletedTimeAfter(LocalDateTime.now());
+        return assignedResourceRepository.findByCompletedTimeAfter(LocalDateTime.now());
     }
 
     public void deallocateResource(AssignedResource member) {
@@ -177,7 +177,12 @@ public class AllocationService {
         assignedResource.setAssignedWorkingTimeInSeconds(availability.getEndTime().toSecondOfDay() - currentTime.toSecondOfDay());
         assignedResource.setHasCompleted(false);
 
-        return assignedMemberRepository.save(assignedResource);
+        return assignedResourceRepository.save(assignedResource);
+    }
+
+    public boolean isResourceAlreadyAllocated(Resource resource) {
+        //TODO: CAMBIARE QUERY
+        return assignedResourceRepository.existsByHardwareIdAndHasCompletedTrue(resource.getId());
     }
 
 
