@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Document(collection = "assignedMember")
+@Document(collection = "assignedResource")
 public class AssignedResource {
     @Id
     private String id;

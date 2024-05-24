@@ -21,6 +21,8 @@ public class AllocationService {
     private final ResourceRepository resourceRepository;
     private final AssignedResourceRepository assignedResourceRepository;
 
+    //TODO: Può tornare utile dichiarare i MessageHandler per inviare i messaggi all'aggiornamento
+
     @Autowired
     public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository, ResourceRepository resourceRepository, AssignedResourceRepository assignedMemberRepository) {
         this.taskRepository = taskRepository;
@@ -189,6 +191,7 @@ public class AllocationService {
 
     public boolean isResourceAlreadyAllocated(Resource resource) {
         //TODO: CAMBIARE QUERY
+        // Vedere se è utile capire se la risorsa esiste in base all'assignedTime
         return assignedResourceRepository.existsByHardwareIdAndHasCompletedTrue(resource.getId());
     }
 
@@ -197,7 +200,7 @@ public class AllocationService {
     }
 
     public Optional<AssignedResource> getAssignedResource(String id){
-        return assignedMemberRepository.findById(id);
+        return assignedResourceRepository.findById(id);
     }
 
 }

@@ -57,9 +57,11 @@ public class AllocationAlgorithm {
                     resource.setIsAvailable(false);
                     resource.setCurrentTaskId(task.getId());
                     allocationService.updateResource(resource);
+                    //TODO: NOTIFICARE CHE LA RISORSA VIENE ASSEGNATA
 
                     //Crea un AssignedResource e lo aggiunge alla lista delle risorse assegnate
                     AssignedResource assigned = allocationService.assignResource(resource);
+                    //TODO: NOTIFICARE CHE LA RISORSA VIENE ASSEGNATA E AGGIORNARE LA LISTA DI RISORSE ASSEGNATE DEL TASK
 
                     //Aggiorna la task assignment con la nuova risorsa assegnata
                     taskAssignment.getAssignedResources().add(assigned);
