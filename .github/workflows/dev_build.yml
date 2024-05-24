@@ -49,7 +49,7 @@ jobs:
     name: Deploy Service
     permissions: write-all
     environment: aws
-    needs: [ build, prepare_release ]
+    needs: [ build ]
     runs-on: ubuntu-latest
     env:
       SSH_USER: ${{ secrets.SSH_USER }}
