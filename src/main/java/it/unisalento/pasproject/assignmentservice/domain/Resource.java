@@ -14,6 +14,8 @@ public class Resource {
     @Id
     private String id;
     private String idResource;
+    private String name;
+
     private List<Availability> availability;
     private double kWh;
     private String memberEmail;

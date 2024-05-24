@@ -15,4 +15,5 @@ public interface TaskAssignmentRepository extends MongoRepository<TaskAssignment
     List<TaskAssignment> findByIsCompleteFalse();
 
     List<TaskAssignment> findByIdTaskAndIsCompleteFalse(String id);
+
 }

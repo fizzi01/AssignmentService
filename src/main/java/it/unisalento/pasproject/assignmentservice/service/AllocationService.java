@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,6 +63,8 @@ public class AllocationService {
     public List<TaskAssignment> getTaskAssignments(String id) {
         return taskAssignmentRepository.findByIdTaskAndIsCompleteFalse(id);
     }
+
+
 
     public void deallocateResources(TaskAssignment taskAssignment) {
         completeTaskAssignment(taskAssignment);
@@ -142,6 +145,10 @@ public class AllocationService {
         return assignment;
     }
 
+    public Optional<TaskAssignment> getTaskAssignment(String assignmentId){
+        return taskAssignmentRepository.findById(assignmentId);
+    }
+
     public TaskAssignment updateTaskAssignment(TaskAssignment taskAssignment){
         return taskAssignmentRepository.save(taskAssignment);
     }
@@ -185,5 +192,12 @@ public class AllocationService {
         return assignedResourceRepository.existsByHardwareIdAndHasCompletedTrue(resource.getId());
     }
 
+    public Optional<Resource> getResource(String id){
+        return resourceRepository.findById(id);
+    }
+
+    public Optional<AssignedResource> getAssignedResource(String id){
+        return assignedMemberRepository.findById(id);
+    }
 
 }

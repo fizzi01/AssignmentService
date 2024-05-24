@@ -1,10 +1,10 @@
 {
-  "template": "#${{CHANGELOG}}\n\n${{RELEASE_DIFF}}\n",
+  "template": "${{CHANGELOG}}\n\n${{RELEASE_DIFF}}\n",
   "categories": [
     { "title": "� Enhancements", "labels": ["enhancement"] },
     { "title": "� Bug Fixes", "labels": ["bug"] },
     { "title": "� Maintenance", "labels": ["chore"] },
-    { "title": "Changes", "labels": [] }
+    { "title": "#Changes", "labels": [] }
   ],
   "sort": "ASC",
   "max_tags_to_fetch": 10,
