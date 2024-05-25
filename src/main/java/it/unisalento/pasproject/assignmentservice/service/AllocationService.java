@@ -117,6 +117,7 @@ public class AllocationService {
     }
 
     public void updateTask(Task task) {
+        //TODO: Notification logic per l'aggiornamento della task
         taskRepository.save(task);
     }
 
@@ -137,6 +138,10 @@ public class AllocationService {
         TaskAssignment assignment =  taskAssignmentRepository.findByIdTask(task.getId());
 
         if ( assignment == null ) {
+            task.setStartTime(LocalDateTime.now());
+            task.setRunning(true);
+            updateTask(task);
+
             assignment = new TaskAssignment();
             assignment.setIdTask(task.getId());
             assignment.setIsComplete(false);
@@ -161,6 +166,7 @@ public class AllocationService {
     }
 
     public AssignedResource assignResource(Resource resource){
+        //TODO: Notification logic
 
         DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
         LocalTime currentTime = LocalTime.now();
