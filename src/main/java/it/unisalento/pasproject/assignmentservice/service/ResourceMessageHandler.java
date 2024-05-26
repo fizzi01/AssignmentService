@@ -4,6 +4,7 @@ import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageE
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.ResourceMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.ResourceStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,8 @@ public class ResourceMessageHandler {
     @Value("${rabbitmq.routing.resourceassignment.key}")
     private String resourceAssignedTopic;
 
-    @Value("${rabbitmq.routing.resourceusage.key}")
-    private String resourceUsageTopic;
+    @Value("${rabbitmq.routing.resourcedeallocation.key}")
+    private String resourceDeallocationTopic;
 
     @Value("${rabbitmq.exchange.data.name}")
     private String dataExchange;
@@ -60,15 +61,15 @@ public class ResourceMessageHandler {
         resourceRepository.save(newResource);
     }
 
-    public void handleResourceAssignment(ResourceMessageDTO message) {
+    public void handleResourceAssignment(ResourceStatusMessageDTO message) {
         MessageDTO result = messageExchanger.exchangeMessage(message, resourceAssignedTopic, dataExchange, MessageDTO.class);
         if(result.getCode() != 200) {
             throw new RuntimeException("Error in sending the message");
         }
     }
 
-    public void handleResourceUsage(ResourceMessageDTO message) {
-        MessageDTO result = messageExchanger.exchangeMessage(message, resourceUsageTopic, dataExchange, MessageDTO.class);
+    public void handleResourceDeallocation(ResourceStatusMessageDTO message) {
+        MessageDTO result = messageExchanger.exchangeMessage(message, resourceDeallocationTopic, dataExchange, MessageDTO.class);
         if(result.getCode() != 200) {
             throw new RuntimeException("Error in sending the message");
         }

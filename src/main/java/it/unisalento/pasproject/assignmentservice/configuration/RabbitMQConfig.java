@@ -130,10 +130,10 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing.resourceassignment.key}")
     private String resourceAssignmentTopic;
 
-    @Value("${rabbitmq.queue.resourceusage.name}")
+    @Value("${rabbitmq.queue.resourcedeallocation.name}")
     private String resourceUsageQueue;
 
-    @Value("${rabbitmq.routing.resourceusage.key}")
+    @Value("${rabbitmq.routing.resourcedeallocation.key}")
     private String resourceUsageTopic;
 
     // Others queues and topics for resource messages

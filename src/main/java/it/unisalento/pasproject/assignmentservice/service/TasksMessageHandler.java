@@ -5,6 +5,7 @@ import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageE
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.dto.TaskMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.TaskStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,7 @@ public class TasksMessageHandler {
      * This method is called when a user is assigned to a task
      * @param message the message containing the task id and the list of users assigned
      */
-    public void handleTaskAssignment(TaskMessageDTO message) {
+    public void handleTaskAssignment(TaskStatusMessageDTO message) {
        MessageDTO result =  messageExchanger.exchangeMessage(message, taskAssingmentTopic, dataExchange, MessageDTO.class);
        if(result.getCode() != 200) {
            throw new RuntimeException("Error in sending the message");
@@ -111,7 +112,7 @@ public class TasksMessageHandler {
      * This method is called when a task execution is stopped
      * @param message the message containing the task id and the running status
      */
-    public void stopTaskExecution(TaskMessageDTO message) {
+    public void endTaskExecution(TaskStatusMessageDTO message) {
         MessageDTO result =  messageExchanger.exchangeMessage(message, taskExecutionTopic, dataExchange, MessageDTO.class);
         if(result.getCode() != 200) {
             throw new RuntimeException("Error in sending the message");
