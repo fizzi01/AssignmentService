@@ -37,6 +37,11 @@ public class AllocationAlgorithm {
             double totalComputingPower = getCurrentComputingPower(taskAssignment.getAssignedResources());
             double totalCudaPower = getCurrentCudaPower(taskAssignment.getAssignedResources());
 
+            if(!task.getEnabled()){
+                task.setEnabled(true);
+                allocationService.updateTask(task);
+            }
+
             for (Resource resource : resources) {
 
                 //Non considera più le task già assegnate

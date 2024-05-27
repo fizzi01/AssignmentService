@@ -41,11 +41,7 @@ public class AllocationService {
     }
 
     public List<Task> getAvailableTasks() {
-        //Prendo una lista di TaskAssignment non ancora completati
-        List<TaskAssignment> taskAssignments = taskAssignmentRepository.findByIsCompleteFalse();
-
-        //Delle task ottenute (gli id delle task) prendo solo le task che hanno enabled=true e running=true
-        return taskRepository.findByIdInAndEnabledTrueAndRunningTrue(taskAssignments.stream().map(TaskAssignment::getIdTask).toList());
+        return taskRepository.findByRunningTrue();
     }
 
     public List<Resource> getAvailableResources() {
@@ -156,7 +152,7 @@ public class AllocationService {
             assignment.setIdTask(task.getId());
             assignment.setIsComplete(false);
             assignment.setAssignedResources(List.of());
-            taskAssignmentRepository.save(assignment);
+            return taskAssignmentRepository.save(assignment);
         }
 
         return assignment;

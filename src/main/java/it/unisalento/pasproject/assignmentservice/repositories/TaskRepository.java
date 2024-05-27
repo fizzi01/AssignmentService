@@ -11,4 +11,6 @@ public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByIdInAndEnabledTrueAndRunningTrue(List<String> list);
 
     List<Task> findByEnabledTrueAndRunningTrue();
+
+    List<Task> findByRunningTrue();
 }
