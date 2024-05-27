@@ -253,6 +253,9 @@ jobs:
           
            ssh -o StrictHostKeyChecking=no -i key.pem $SSH_USER@$SSH_HOST "mkdir -p $SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/build/libs"
           
+          echo "Cleaning up old files"
+          rm -rf build/libs/*
+          
           scp -o StrictHostKeyChecking=no -i key.pem *.jar $SSH_USER@$SSH_HOST:$SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/build/libs/$artifact_name
           scp -o StrictHostKeyChecking=no -i key.pem docker-compose.yml $SSH_USER@$SSH_HOST:$SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/docker-compose.yml
           scp -o StrictHostKeyChecking=no -i key.pem .env $SSH_USER@$SSH_HOST:$SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/.env
