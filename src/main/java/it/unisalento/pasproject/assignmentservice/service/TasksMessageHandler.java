@@ -5,6 +5,7 @@ import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageE
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.dto.TaskMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.TaskStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -31,6 +33,12 @@ public class TasksMessageHandler {
 
     @Value("${rabbitmq.exchange.data.name}")
     private String dataExchange;
+
+    @Value("${rabbitmq.exchange.notification.name}")
+    private String notificationExchange;
+
+    @Value("${rabbitmq.routing.notification.key}")
+    private String notificationTopic;
 
 
     private final MessageExchanger messageExchanger;
@@ -75,6 +83,15 @@ public class TasksMessageHandler {
         newTask.setRunning(taskMessageDTO.getRunning());
         newTask.setEnabled(taskMessageDTO.getEnabled());
 
+        if (newTask.getEnabled() && newTask.getRunning()) {
+            if (newTask.getStartTime() == null) {
+                newTask.setStartTime(LocalDateTime.now());
+                newTask.setEndTime(newTask.getStartTime().plusSeconds(newTask.getTaskDuration().longValue()));
+            }
+        } else {
+            newTask.setStartTime(null);
+        }
+
         taskRepository.save(newTask);
     }
 
@@ -85,7 +102,7 @@ public class TasksMessageHandler {
      * @param message the message containing the task id and the list of users assigned
      * TODO: NON USARE EXCHANGE
      */
-    public void handleTaskAssignment(TaskMessageDTO message) {
+    public void handleTaskAssignment(TaskStatusMessageDTO message) {
        MessageDTO result =  messageExchanger.exchangeMessage(message, taskAssingmentTopic, dataExchange, MessageDTO.class);
        if(result.getCode() != 200) {
            throw new RuntimeException("Error in sending the message");
@@ -96,7 +113,7 @@ public class TasksMessageHandler {
      * This method is called when a task execution is stopped
      * @param message the message containing the task id and the running status
      */
-    public void stopTaskExecution(TaskMessageDTO message) {
+    public void endTaskExecution(TaskStatusMessageDTO message) {
         MessageDTO result =  messageExchanger.exchangeMessage(message, taskExecutionTopic, dataExchange, MessageDTO.class);
         if(result.getCode() != 200) {
             throw new RuntimeException("Error in sending the message");

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Ferma il container Docker
 docker-compose stop
 

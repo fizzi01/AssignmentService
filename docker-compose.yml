@@ -13,7 +13,7 @@ services:
     networks:
       - greenspot2-net
     volumes:
-      - ./build/libs/AssignmentService-v1.0.10.jar:/app/app.jar
+      - ./build/libs/AssignmentService-v1.1.2.jar:/app/app.jar
     working_dir: /app
     entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
 
@@ -34,6 +34,6 @@ networks:
     name: greenspot2_net
 
 volumes:
-    mongo_assign:
-    mongo_assign_data:
-    mongo_assign_config:
+  mongo_assign:
+  mongo_assign_data:
+  mongo_assign_config:

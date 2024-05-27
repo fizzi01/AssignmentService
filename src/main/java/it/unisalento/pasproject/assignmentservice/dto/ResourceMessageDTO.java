@@ -14,7 +14,7 @@ public class ResourceMessageDTO {
     private double kWh;
     private String memberEmail;
     private Boolean isAvailable;
-    private String assignedUser;
+    private String currentTaskId;
     private double singleCoreScore;
     private double multicoreScore;
     private double openclScore;

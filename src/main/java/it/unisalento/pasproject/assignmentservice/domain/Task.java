@@ -6,6 +6,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 // DEVE CONTENERE SOLO LE informazioni necessarie per runnare la business logic dell'assegnazione
 // tutte le altre informazioni sono contenute altrove.
 // QUINDI deve contenere informazioni sui filtri della task e sullo stato della task
@@ -84,6 +87,10 @@ public class Task {
      * If true, the task is enabled. If false, the task is disabled.
      */
     private Boolean enabled;
+
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
 
 
     /**

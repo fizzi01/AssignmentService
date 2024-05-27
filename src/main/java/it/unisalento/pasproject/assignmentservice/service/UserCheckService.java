@@ -41,11 +41,9 @@ public class UserCheckService {
         //Chiamata MQTT a CQRS per ottenere i dettagli dell'utente
         UserDetailsDTO user = messageExchanger.exchangeMessage(email,securityRequestRoutingKey,securityExchange,UserDetailsDTO.class);
 
-        if(user == null) {
-            throw new UsernameNotFoundException(email);
+        if(user != null) {
+            LOGGER.info(String.format("User %s found with role: %s and enabled %s", user.getEmail(), user.getRole(), user.getEnabled()));
         }
-
-        LOGGER.info(String.format("User %s found with role: %s and enabled %s", user.getEmail(), user.getRole(), user.getEnabled()));
 
         return user;
     }

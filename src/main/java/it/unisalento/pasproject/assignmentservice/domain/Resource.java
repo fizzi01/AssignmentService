@@ -14,13 +14,15 @@ public class Resource {
     @Id
     private String id;
     private String idResource;
+    private String name;
+
     private List<Availability> availability;
     private double kWh;
     private String memberEmail;
 
     // Campi da aggiornare in base all'assegnazione
     private Boolean isAvailable;
-    private String assignedUser;
+    private String currentTaskId;
 
     private double singleCoreScore;
     private double multicoreScore;

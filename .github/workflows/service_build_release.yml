@@ -56,6 +56,7 @@ jobs:
     outputs:
       new-tag: ${{ steps.new_version.outputs.NEW_TAG }}
       tag-message: ${{ steps.commit_messages.outputs.commit_messages }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -96,6 +97,12 @@ jobs:
           echo "NEW_TAG=$new_version" >> $GITHUB_ENV
           echo "NEW_TAG=$new_version" >> $GITHUB_OUTPUT
 
+      - name: Create and push new tag
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.NEW_TAG }}
+    
 
       - name: Update build.gradle
         run: |
@@ -124,6 +131,22 @@ jobs:
           git commit -m "Update build.gradle & docker-compose to ${{ env.NEW_TAG }}"
           git push
 
+      - name: Generate Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v2
+        with:
+          commitMode: true
+          configuration: .github/release-changelog-config.json
+          fromTag: ${{ env.REAL_OLD_TAG }}
+          toTag: ${{ env.NEW_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print Changelog
+        run: |
+          echo "${{ steps.changelog.outputs.changelog }}"
+
+
   release:
     name: Release Service
     needs: prepare_release
@@ -145,15 +168,23 @@ jobs:
           mv *.jar ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}-${{  needs.prepare_release.outputs.new-tag }}.jar
           ls -l
 
+      - name: Save Changelog to File
+        run: |
+          echo "${{ needs.prepare_release.outputs.changelog }}" | sed '/- PR: #0/d' > changelog.md
+          cat changelog.md
+        id: save_changelog
+
       - name: Creating Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: ncipollo/release-action@v1.14.0
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: "latest"
-          title: "Release ${{  needs.prepare_release.outputs.new-tag }}"
-          files: |
+          tag: ${{ needs.prepare_release.outputs.new-tag }}
+          name: Release ${{ needs.prepare_release.outputs.new-tag }}
+          bodyFile: changelog.md
+          makeLatest: "latest"
+          artifacts: |
             *.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     name: Deploy Service
@@ -178,7 +209,6 @@ jobs:
         run: |
           git pull origin ${{ github.ref_name }}
 
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -188,7 +218,7 @@ jobs:
         run: |
           echo "Renaming artifact jar"
           mv *.jar ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}-${{  needs.prepare_release.outputs.new-tag }}.jar
-
+          
       - name: Deploy
         run: |
           if  [ "$DEPLOY" != 1  ]; then
@@ -220,7 +250,10 @@ jobs:
             exit 1
           fi
           
-          ssh -o StrictHostKeyChecking=no -i key.pem $SSH_USER@$SSH_HOST "mkdir -p $SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/build/libs"
+           ssh -o StrictHostKeyChecking=no -i key.pem $SSH_USER@$SSH_HOST "mkdir -p $SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/build/libs"
+          
+          echo "Cleaning up old files"
+          rm -rf build/libs/*
           
           scp -o StrictHostKeyChecking=no -i key.pem *.jar $SSH_USER@$SSH_HOST:$SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/build/libs/$artifact_name
           scp -o StrictHostKeyChecking=no -i key.pem docker-compose.yml $SSH_USER@$SSH_HOST:$SSH_PATH${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}/docker-compose.yml

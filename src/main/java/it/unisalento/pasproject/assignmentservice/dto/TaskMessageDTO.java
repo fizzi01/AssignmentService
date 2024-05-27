@@ -4,6 +4,7 @@ package it.unisalento.pasproject.assignmentservice.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -77,5 +78,4 @@ public class TaskMessageDTO {
      * If true, the task is enabled. If false, the task is disabled.
      */
     private Boolean enabled;
-
 }
