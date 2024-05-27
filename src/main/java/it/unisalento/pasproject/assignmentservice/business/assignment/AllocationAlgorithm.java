@@ -47,16 +47,20 @@ public class AllocationAlgorithm {
             }
 
             for (Resource resource : resources) {
+                LOGGER.info("Checking resource " + resource.getId());
 
                 //Non considera più le task già assegnate
                 if ( isAlreadyAssigned(taskAssignment.getAssignedResources(),resource)){
+                    LOGGER.info("Resource " + resource.getId() + " already assigned to task " + task.getId());
                     continue;
                 }
 
                 // Verifichiamo che si siano raggiunti i limiti di potenza computazionale
                 if ( task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0 ) {
+                    LOGGER.info("Task " + task.getId() + " reached max computing power");
                     return;
                 } else if ( task.getMaxCudaPower() - totalCudaPower < CUDA_THRESHOLD && task.getMaxCudaPower() > 0.0){
+                    LOGGER.info("Task " + task.getId() + " reached max cuda power");
                     return;
                 }
 
@@ -78,6 +82,8 @@ public class AllocationAlgorithm {
                     totalComputingPower += getComputationalPower(assigned);
                     totalCudaPower += getCudaPower(assigned);
 
+                } else {
+                    LOGGER.info("Resource " + resource.getId() + " not suitable for task " + task.getId());
                 }
             }
         }
@@ -151,6 +157,11 @@ public class AllocationAlgorithm {
 
         //Controllo minWorkingTime
         if (!hasMinWorkingTime(resource, task)) {
+            return false;
+        }
+
+        //Controllo non si superi la maxEnergyConsumption
+        if (resource.getKWh() > task.getMaxEnergyConsumption()) {
             return false;
         }
 

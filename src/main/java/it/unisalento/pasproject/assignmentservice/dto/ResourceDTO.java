@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 public class ResourceDTO {
     private String id;
+    private String name;
     @JsonDeserialize(using = AvailabilityDeserializer.class)
     private List<Availability> availability;
     private double kWh;

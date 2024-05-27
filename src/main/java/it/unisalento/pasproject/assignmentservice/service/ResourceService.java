@@ -31,6 +31,7 @@ public class ResourceService {
     public ResourceDTO getResourceDTO(Resource resource) {
         ResourceDTO resourceDTO = new ResourceDTO();
         Optional.ofNullable(resource.getId()).ifPresent(resourceDTO::setId);
+        Optional.ofNullable(resource.getName()).ifPresent(resourceDTO::setName);
         Optional.ofNullable(resource.getAvailability()).ifPresent(resourceDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceDTO::setMemberEmail);
