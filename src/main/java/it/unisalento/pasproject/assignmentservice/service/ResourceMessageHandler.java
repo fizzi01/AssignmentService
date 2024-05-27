@@ -1,6 +1,6 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
-import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchanger;
+import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageProducer;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.ResourceMessageDTO;
@@ -36,14 +36,14 @@ public class ResourceMessageHandler {
     private String notificationTopic;
 
     private final ResourceService resourceService;
-    private final MessageExchanger messageExchanger;
+    private final MessageProducer messageProducer;
     private final ResourceRepository resourceRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMessageHandler.class);
 
     @Autowired
-    public ResourceMessageHandler(ResourceRepository resourceRepository, MessageExchanger messageExchanger, ResourceService resourceService) {
+    public ResourceMessageHandler(ResourceRepository resourceRepository, MessageProducer messageProducer, ResourceService resourceService) {
         this.resourceRepository = resourceRepository;
-        this.messageExchanger = messageExchanger;
+        this.messageProducer = messageProducer;
         this.resourceService = resourceService;
     }
 
@@ -62,16 +62,11 @@ public class ResourceMessageHandler {
     }
 
     public void handleResourceAssignment(ResourceStatusMessageDTO message) {
-        MessageDTO result = messageExchanger.exchangeMessage(message, resourceAssignedTopic, dataExchange, MessageDTO.class);
-        if(result.getCode() != 200) {
-            throw new RuntimeException("Error in sending the message");
-        }
+        messageProducer.sendMessage(message, resourceAssignedTopic, dataExchange);
+
     }
 
     public void handleResourceDeallocation(ResourceStatusMessageDTO message) {
-        MessageDTO result = messageExchanger.exchangeMessage(message, resourceDeallocationTopic, dataExchange, MessageDTO.class);
-        if(result.getCode() != 200) {
-            throw new RuntimeException("Error in sending the message");
-        }
+       messageProducer.sendMessage(message, resourceDeallocationTopic, dataExchange);
     }
 }
