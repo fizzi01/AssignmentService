@@ -76,8 +76,11 @@ public class AllocationService {
     }
 
     public TaskAssignment getActiveTaskAssignment(Resource resource) {
-        AssignedResource assignedResource = assignedResourceRepository.findById(resource.getId()).orElseThrow();
-        return taskAssignmentRepository.findByAssignedResourcesContainsAndIsCompleteFalse(assignedResource);
+        Optional<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareId(resource.getId());
+        if (assignedResource.isEmpty())
+            return null;
+        AssignedResource assigned = assignedResource.get();
+        return taskAssignmentRepository.findByAssignedResourcesContainsAndIsCompleteFalse(assigned);
     }
 
     public void deallocateResources(TaskAssignment taskAssignment) {
