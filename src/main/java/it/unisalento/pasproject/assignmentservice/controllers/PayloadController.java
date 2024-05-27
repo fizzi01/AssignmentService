@@ -2,6 +2,7 @@ package it.unisalento.pasproject.assignmentservice.controllers;
 
 import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
+import it.unisalento.pasproject.assignmentservice.dto.AssignedResourceDTO;
 import it.unisalento.pasproject.assignmentservice.dto.PayloadRequestDTO;
 import it.unisalento.pasproject.assignmentservice.dto.PayloadResponseDTO;
 import it.unisalento.pasproject.assignmentservice.exceptions.WrongPayloadRequest;
@@ -30,7 +31,7 @@ public class PayloadController {
 
     //Richiesta da chiamare quando il payload si avvia, la richiesta contiene l'id del membro
     @PostMapping(value="/resource/update")
-    public void startAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
+    public AssignedResourceDTO startAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
 
         if (payloadRequestDTO.getAssignedResourceId() == null || payloadRequestDTO.getMemberEmail() == null) {
             throw new WrongPayloadRequest("Assignment id and member email must be provided");
@@ -43,15 +44,26 @@ public class PayloadController {
             throw new WrongPayloadRequest("Assigned resource not found");
         }
 
+        AssignedResource assignedResourceToUpdate = assignedResource.get();
+        AssignedResourceDTO assignedResourceDTO = new AssignedResourceDTO();
+
         //In base a start o stop
         if(payloadRequestDTO.getStart() != null && payloadRequestDTO.getStart()) {
             //Aggiorno il tempo di inizio
-            assignedResource.get().setAssignedTime(LocalDateTime.now());
-            allocationService.updateAssignedResource(assignedResource.get());
+            assignedResourceToUpdate.setAssignedTime(LocalDateTime.now());
+            allocationService.updateAssignedResource(assignedResourceToUpdate);
+
+            assignedResourceDTO.setAssignedTime(assignedResourceToUpdate.getAssignedTime());
+
+            return assignedResourceDTO;
         } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
             //Aggiorno il tempo di fine
-            assignedResource.get().setCompletedTime(LocalDateTime.now());
-            allocationService.updateAssignedResource(assignedResource.get());
+            assignedResourceToUpdate.setCompletedTime(LocalDateTime.now());
+            allocationService.updateAssignedResource(assignedResourceToUpdate);
+
+            assignedResourceDTO.setCompletedTime(assignedResourceToUpdate.getCompletedTime());
+
+            return assignedResourceDTO;
         } else {
             throw new WrongPayloadRequest("Start or stop must be provided");
         }
