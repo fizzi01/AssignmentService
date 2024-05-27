@@ -85,7 +85,7 @@ public class AssignmentWatcher {
             return false;
         }
 
-        return assigned.stream().allMatch(resource -> resource.isHasCompleted() || now.isAfter(resource.getCompletedTime()));
+        return assigned.stream().allMatch(resource -> resource.isHasCompleted() || ( resource.getCompletedTime() != null && now.isAfter(resource.getCompletedTime())));
     }
 
     /**

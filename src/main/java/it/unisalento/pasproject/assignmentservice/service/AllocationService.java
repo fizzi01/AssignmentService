@@ -280,4 +280,8 @@ public class AllocationService {
     public List<Resource> getAssignedResources() {
         return resourceRepository.findByIsAvailableFalse();
     }
+
+    public void updateAssignedResource(AssignedResource assignedResource) {
+        assignedResourceRepository.save(assignedResource);
+    }
 }

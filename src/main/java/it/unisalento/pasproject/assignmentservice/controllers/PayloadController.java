@@ -47,9 +47,11 @@ public class PayloadController {
         if(payloadRequestDTO.getStart() != null && payloadRequestDTO.getStart()) {
             //Aggiorno il tempo di inizio
             assignedResource.get().setAssignedTime(LocalDateTime.now());
+            allocationService.updateAssignedResource(assignedResource.get());
         } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
             //Aggiorno il tempo di fine
             assignedResource.get().setCompletedTime(LocalDateTime.now());
+            allocationService.updateAssignedResource(assignedResource.get());
         } else {
             throw new WrongPayloadRequest("Start or stop must be provided");
         }
