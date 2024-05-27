@@ -14,6 +14,7 @@ public class ResourceService {
         Resource resource = new Resource();
 
         Optional.ofNullable(resourceMessageDTO.getId()).ifPresent(resource::setId);
+        Optional.ofNullable(resourceMessageDTO.getName()).ifPresent(resource::setName);
         Optional.ofNullable(resourceMessageDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceMessageDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceMessageDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);

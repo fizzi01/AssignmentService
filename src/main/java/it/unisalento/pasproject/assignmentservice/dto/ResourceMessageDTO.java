@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class ResourceMessageDTO {
     private String id;
+    private String name;
     private List<Availability> availability;
     private double kWh;
     private String memberEmail;
