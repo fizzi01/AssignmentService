@@ -71,6 +71,10 @@ public class AssignmentWatcher {
         LocalDateTime now = LocalDateTime.now();
 
         List<AssignedResource> assigned = allocationService.getActiveTaskAssignment(task.getId()).getAssignedResources();
+        if (assigned.isEmpty()){
+            return false;
+        }
+
         return assigned.stream().allMatch(resource -> resource.isHasCompleted() || now.isAfter(now.plusSeconds(resource.getAssignedWorkingTimeInSeconds())));
     }
 
