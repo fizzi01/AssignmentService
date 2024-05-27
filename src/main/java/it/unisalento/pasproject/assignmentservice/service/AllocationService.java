@@ -230,7 +230,7 @@ public class AllocationService {
 
     public void sendTaskStatusMessage(Task task) {
         TaskStatusMessageDTO taskStatusMessageDTO = new TaskStatusMessageDTO();
-        taskStatusMessageDTO.setId(task.getId());
+        taskStatusMessageDTO.setId(task.getIdTask());
         taskStatusMessageDTO.setStartTime(task.getStartTime());
         taskStatusMessageDTO.setEndTime(task.getEndTime());
         taskStatusMessageDTO.setRunning(task.getRunning());
