@@ -58,10 +58,10 @@ public class AllocationAlgorithm {
                 // Verifichiamo che si siano raggiunti i limiti di potenza computazionale
                 if ( task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0 ) {
                     LOGGER.info("Task " + task.getId() + " reached max computing power");
-                    return;
+                    continue;
                 } else if ( task.getMaxCudaPower() - totalCudaPower < CUDA_THRESHOLD && task.getMaxCudaPower() > 0.0){
                     LOGGER.info("Task " + task.getId() + " reached max cuda power");
-                    return;
+                    continue;
                 }
 
                 if (isSuitableResource(task, resource, totalComputingPower)) {

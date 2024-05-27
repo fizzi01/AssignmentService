@@ -1,5 +1,6 @@
 package it.unisalento.pasproject.assignmentservice.repositories;
 
+import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -14,6 +15,6 @@ public interface TaskAssignmentRepository extends MongoRepository<TaskAssignment
     // Esempio: trovare tutte le assegnazioni che non sono ancora completate
     List<TaskAssignment> findByIsCompleteFalse();
 
-    List<TaskAssignment> findByIdTaskAndIsCompleteFalse(String id);
-
+    List<TaskAssignment> findAllByIdTaskAndIsCompleteFalse(String id);
+    TaskAssignment findByIdTaskAndIsCompleteFalse(String id);
 }

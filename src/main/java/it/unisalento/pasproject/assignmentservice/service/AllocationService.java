@@ -67,7 +67,11 @@ public class AllocationService {
     }
 
 
-    public List<TaskAssignment> getTaskAssignments(String id) {
+    public List<TaskAssignment> getActiveTaskAssignments(String id) {
+        return taskAssignmentRepository.findAllByIdTaskAndIsCompleteFalse(id);
+    }
+
+    public TaskAssignment getActiveTaskAssignment(String id) {
         return taskAssignmentRepository.findByIdTaskAndIsCompleteFalse(id);
     }
 
@@ -196,6 +200,7 @@ public class AllocationService {
 
         assignedResource.setHardwareId(resource.getId());
         assignedResource.setAssignedWorkingTimeInSeconds(availability.getEndTime().toSecondOfDay() - currentTime.toSecondOfDay());
+
         assignedResource.setHasCompleted(false);
 
         return assignedResourceRepository.save(assignedResource);

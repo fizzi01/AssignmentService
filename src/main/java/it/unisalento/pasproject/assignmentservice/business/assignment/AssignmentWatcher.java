@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class AssignmentWatcher {
@@ -63,7 +64,9 @@ public class AssignmentWatcher {
      */
     private boolean allResourcesFinished(Task task) {
         LocalDateTime now = LocalDateTime.now();
-        return allocationService.getTaskAssignments(task.getId()).stream().allMatch(member -> now.isAfter(member.getCompletedTime()));
+
+        List<AssignedResource> assigned = allocationService.getActiveTaskAssignment(task.getId()).getAssignedResources();
+        return assigned.stream().allMatch(resource -> !resource.isHasCompleted() && now.isAfter(now.plusSeconds(resource.getAssignedWorkingTimeInSeconds())));
     }
 
     /**
@@ -98,7 +101,7 @@ public class AssignmentWatcher {
     private void deallocateResources(Task task) {
         //Prende il task assignment che ha come taskId il task.id e che non è completed
         //Dealloca le risorse
-        allocationService.getTaskAssignments(task.getId()).forEach(allocationService::deallocateResources);
+        allocationService.getActiveTaskAssignments(task.getId()).forEach(allocationService::deallocateResources);
     }
 
 }
