@@ -2,6 +2,8 @@ package it.unisalento.pasproject.assignmentservice.business.assignment;
 
 import it.unisalento.pasproject.assignmentservice.domain.*;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,8 @@ public class AllocationAlgorithm {
 
     public AllocationService allocationService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AllocationAlgorithm.class);
+
     @Autowired
     public AllocationAlgorithm(AllocationService allocationService) {
         this.allocationService = allocationService;
@@ -31,7 +35,7 @@ public class AllocationAlgorithm {
      */
     public void assignResources(List<Task> tasks, List<Resource> resources) {
         for (Task task : tasks) {
-
+            LOGGER.info("Assigning resources to task " + task.getId());
             TaskAssignment taskAssignment = allocationService.getTaskAssignment(task);
 
             double totalComputingPower = getCurrentComputingPower(taskAssignment.getAssignedResources());
@@ -57,7 +61,7 @@ public class AllocationAlgorithm {
                 }
 
                 if (isSuitableResource(task, resource, totalComputingPower)) {
-
+                    LOGGER.info("Assigning resource " + resource.getId() + " to task " + task.getId());
                     // Assegna la risorsa alla task
                     resource.setIsAvailable(false);
                     resource.setCurrentTaskId(task.getId());
