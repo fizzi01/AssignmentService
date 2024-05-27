@@ -2,6 +2,8 @@ package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchangeStrategy;
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchanger;
+import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageProducer;
+import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageProducerStrategy;
 import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.dto.TaskMessageDTO;
@@ -41,14 +43,14 @@ public class TasksMessageHandler {
     private String notificationTopic;
 
 
-    private final MessageExchanger messageExchanger;
+    private final MessageProducer messageProducer;
     private final TaskRepository taskRepository;
 
     @Autowired
-    public TasksMessageHandler(TaskRepository taskRepository, MessageExchanger messageExchanger, @Qualifier("RabbitMQExchange")MessageExchangeStrategy strategy) {
+    public TasksMessageHandler(TaskRepository taskRepository, MessageProducer messageProducer, @Qualifier("RabbitMQProducer") MessageProducerStrategy strategy) {
         this.taskRepository = taskRepository;
-        this.messageExchanger = messageExchanger;
-        messageExchanger.setStrategy(strategy);
+        this.messageProducer = messageProducer;
+        messageProducer.setStrategy(strategy);
     }
 
     /**
@@ -103,10 +105,7 @@ public class TasksMessageHandler {
      * TODO: NON USARE EXCHANGE
      */
     public void handleTaskAssignment(TaskStatusMessageDTO message) {
-       MessageDTO result =  messageExchanger.exchangeMessage(message, taskAssingmentTopic, dataExchange, MessageDTO.class);
-       if(result.getCode() != 200) {
-           throw new RuntimeException("Error in sending the message");
-       }
+       messageProducer.sendMessage(message, taskAssingmentTopic, dataExchange);
     }
 
     /**
@@ -114,10 +113,7 @@ public class TasksMessageHandler {
      * @param message the message containing the task id and the running status
      */
     public void endTaskExecution(TaskStatusMessageDTO message) {
-        MessageDTO result =  messageExchanger.exchangeMessage(message, taskExecutionTopic, dataExchange, MessageDTO.class);
-        if(result.getCode() != 200) {
-            throw new RuntimeException("Error in sending the message");
-        }
+        messageProducer.sendMessage(message, taskExecutionTopic, dataExchange);
     }
 
 
