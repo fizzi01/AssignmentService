@@ -68,6 +68,7 @@ public class AssignmentWatcher {
             TaskAssignment taskAssignment = allocationService.getActiveTaskAssignment(resource);
             if (taskAssignment != null && taskAssignment.getIsComplete()) {
                 allocationService.deallocateResource(resource);
+                LOGGER.info("Resource " + resource.getId() + " deallocated");
             }
         });
     }
@@ -90,17 +91,17 @@ public class AssignmentWatcher {
 
     /**
      * Check if the resource is completed
-     * @param member the member to check
+     * @param resource the member to check
      * @return true if the resource is completed, false otherwise
      */
-    private boolean isResourceCompleted(AssignedResource member) {
+    private boolean isResourceCompleted(AssignedResource resource) {
         LocalDateTime now = LocalDateTime.now();
 
-        if (member.getCompletedTime() == null){
+        if (resource.getCompletedTime() == null){
             return false;
         }
 
-        return now.isAfter(member.getCompletedTime()) || member.isHasCompleted();
+        return now.isAfter(resource.getCompletedTime()) || resource.isHasCompleted();
     }
 
 
