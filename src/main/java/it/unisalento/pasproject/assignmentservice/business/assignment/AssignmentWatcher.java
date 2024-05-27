@@ -3,6 +3,8 @@ package it.unisalento.pasproject.assignmentservice.business.assignment;
 import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -27,18 +29,21 @@ public class AssignmentWatcher {
     //Controlla se tutte le risorse sono finite e se sono finite completa la task
 
     //Prende tutti i membri assegnati e controlla se sono completati
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentWatcher.class);
 
     @Scheduled(fixedRate = 60000) // esegue ogni minuto
     public void watch() {
         //Prende tutte le Task che sono in running e che sono enabled
         allocationService.getRunningTasks().forEach(task -> {
             if (isTaskExpired(task)) {
+                LOGGER.info("Task " + task.getId() + " expired");
                 //Completa la task
                 task.setRunning(false);
                 task.setEndTime(LocalDateTime.now());
                 allocationService.updateTask(task);
                 deallocateResources(task);
             }else if (allResourcesFinished(task)) {
+                LOGGER.info("Task " + task.getId() + " completed, all resources finished");
                 //Completa la task
                 task.setRunning(false);
                 task.setEndTime(LocalDateTime.now());
@@ -66,7 +71,7 @@ public class AssignmentWatcher {
         LocalDateTime now = LocalDateTime.now();
 
         List<AssignedResource> assigned = allocationService.getActiveTaskAssignment(task.getId()).getAssignedResources();
-        return assigned.stream().allMatch(resource -> !resource.isHasCompleted() && now.isAfter(now.plusSeconds(resource.getAssignedWorkingTimeInSeconds())));
+        return assigned.stream().allMatch(resource -> resource.isHasCompleted() || now.isAfter(now.plusSeconds(resource.getAssignedWorkingTimeInSeconds())));
     }
 
     /**
