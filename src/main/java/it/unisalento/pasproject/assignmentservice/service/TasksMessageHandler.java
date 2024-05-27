@@ -100,6 +100,7 @@ public class TasksMessageHandler {
     /**
      * This method is called when a user is assigned to a task
      * @param message the message containing the task id and the list of users assigned
+     * TODO: NON USARE EXCHANGE
      */
     public void handleTaskAssignment(TaskStatusMessageDTO message) {
        MessageDTO result =  messageExchanger.exchangeMessage(message, taskAssingmentTopic, dataExchange, MessageDTO.class);

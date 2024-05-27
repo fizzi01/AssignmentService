@@ -6,9 +6,8 @@ import org.springframework.http.HttpStatus;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+@Getter
 public abstract class CustomErrorException extends RuntimeException {
-
-    @Getter
     private CustomErrorResponse errorResponse;
 
     public CustomErrorException(String message, HttpStatus status) {

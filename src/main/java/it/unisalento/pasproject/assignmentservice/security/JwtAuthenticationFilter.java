@@ -1,6 +1,7 @@
 package it.unisalento.pasproject.assignmentservice.security;
 
 
+import it.unisalento.pasproject.assignmentservice.dto.UserDetailsDTO;
 import it.unisalento.pasproject.assignmentservice.exceptions.AccessDeniedException;
 import it.unisalento.pasproject.assignmentservice.exceptions.UserNotAuthorizedException;
 import it.unisalento.pasproject.assignmentservice.service.UserCheckService;

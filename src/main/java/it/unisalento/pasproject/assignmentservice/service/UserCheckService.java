@@ -3,7 +3,7 @@ package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchangeStrategy;
 import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchanger;
-import it.unisalento.pasproject.assignmentservice.security.UserDetailsDTO;
+import it.unisalento.pasproject.assignmentservice.dto.UserDetailsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
