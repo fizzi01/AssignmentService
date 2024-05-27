@@ -75,6 +75,11 @@ public class AllocationService {
         return taskAssignmentRepository.findByIdTaskAndIsCompleteFalse(id);
     }
 
+    public TaskAssignment getActiveTaskAssignment(Resource resource) {
+        AssignedResource assignedResource = assignedResourceRepository.findById(resource.getId()).orElseThrow();
+        return taskAssignmentRepository.findByAssignedResourcesContainsAndIsCompleteFalse(assignedResource);
+    }
+
     public void deallocateResources(TaskAssignment taskAssignment) {
         completeTaskAssignment(taskAssignment);
         LocalDateTime now = LocalDateTime.now();
@@ -120,6 +125,13 @@ public class AllocationService {
 
     public void deallocateResource(AssignedResource assignedResource) {
         Resource resource = resourceRepository.findById(assignedResource.getHardwareId()).orElseThrow();
+        resource.setIsAvailable(true);
+        resource.setCurrentTaskId(null);
+        resourceRepository.save(resource);
+        sendResourceStatusMessage(resource);
+    }
+
+    public void deallocateResource(Resource resource) {
         resource.setIsAvailable(true);
         resource.setCurrentTaskId(null);
         resourceRepository.save(resource);
@@ -262,4 +274,7 @@ public class AllocationService {
             tasksMessageHandler.handleTaskAssignment(taskStatusMessageDTO);
     }
 
+    public List<Resource> getAssignedResources() {
+        return resourceRepository.findByIsAvailableFalse();
+    }
 }

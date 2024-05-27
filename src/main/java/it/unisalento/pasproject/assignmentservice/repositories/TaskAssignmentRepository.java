@@ -1,10 +1,9 @@
 package it.unisalento.pasproject.assignmentservice.repositories;
 
-import it.unisalento.pasproject.assignmentservice.domain.Task;
+import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface TaskAssignmentRepository extends MongoRepository<TaskAssignment, String> {
@@ -17,4 +16,6 @@ public interface TaskAssignmentRepository extends MongoRepository<TaskAssignment
 
     List<TaskAssignment> findAllByIdTaskAndIsCompleteFalse(String id);
     TaskAssignment findByIdTaskAndIsCompleteFalse(String id);
+
+    TaskAssignment findByAssignedResourcesContainsAndIsCompleteFalse(AssignedResource resource);
 }

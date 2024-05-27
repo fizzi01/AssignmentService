@@ -9,4 +9,6 @@ public interface ResourceRepository extends MongoRepository<Resource, String> {
     Resource findByIdResource(String idResource);
 
     List<Resource> findByIsAvailableTrue();
+
+    List<Resource> findByIsAvailableFalse();
 }

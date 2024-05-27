@@ -2,6 +2,7 @@ package it.unisalento.pasproject.assignmentservice.business.assignment;
 
 import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
+import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,15 @@ public class AssignmentWatcher {
                 allocationService.deallocateResource(member);
             }
         });
+
+        //Prende tutte le risorse che sono isAvailable=false e controlla se il TaskAssignment a cui sono associate sia completed
+        //Se completed le dealloca
+        allocationService.getAssignedResources().forEach(resource -> {
+           TaskAssignment taskAssignment = allocationService.getActiveTaskAssignment(resource);
+              if (taskAssignment.getIsComplete()) {
+                allocationService.deallocateResource(resource);
+              }
+        });
     }
 
     /**
@@ -75,7 +85,7 @@ public class AssignmentWatcher {
             return false;
         }
 
-        return assigned.stream().allMatch(resource -> resource.isHasCompleted() || now.isAfter(now.plusSeconds(resource.getAssignedWorkingTimeInSeconds())));
+        return assigned.stream().allMatch(resource -> resource.isHasCompleted() || now.isAfter(resource.getCompletedTime()));
     }
 
     /**
@@ -110,7 +120,8 @@ public class AssignmentWatcher {
     private void deallocateResources(Task task) {
         //Prende il task assignment che ha come taskId il task.id e che non è completed
         //Dealloca le risorse
-        allocationService.getActiveTaskAssignments(task.getId()).forEach(allocationService::deallocateResources);
+        allocationService.deallocateResources(allocationService.getActiveTaskAssignment(task.getId()));
+
     }
 
 }

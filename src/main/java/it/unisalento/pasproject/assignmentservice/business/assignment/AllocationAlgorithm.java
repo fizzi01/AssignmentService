@@ -75,10 +75,14 @@ public class AllocationAlgorithm {
                     AssignedResource assigned = allocationService.assignResource(resource);
 
                     //Aggiorna la task assignment con la nuova risorsa assegnata
-                    List<AssignedResource> oldAssigned = taskAssignment.getAssignedResources();
-                    oldAssigned.add(assigned);
-                    taskAssignment.setAssignedResources(oldAssigned);
-                    for (AssignedResource assignedResource : oldAssigned) {
+                    List<AssignedResource> assignedResources = taskAssignment.getAssignedResources();
+                    if( assignedResources == null){
+                        assignedResources = new ArrayList<>();
+                    }
+                    assignedResources.add(assigned);
+                    taskAssignment.setAssignedResources(assignedResources);
+
+                    for (AssignedResource assignedResource : taskAssignment.getAssignedResources()) {
                         LOGGER.info("Assigned resource: {}", assignedResource.getId());
                     }
                     taskAssignment = allocationService.updateTaskAssignment(taskAssignment);
