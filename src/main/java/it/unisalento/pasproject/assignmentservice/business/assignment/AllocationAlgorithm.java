@@ -1,13 +1,13 @@
 package it.unisalento.pasproject.assignmentservice.business.assignment;
 
-import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
-import it.unisalento.pasproject.assignmentservice.domain.Resource;
-import it.unisalento.pasproject.assignmentservice.domain.Task;
-import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
+import it.unisalento.pasproject.assignmentservice.domain.*;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,6 +112,19 @@ public class AllocationAlgorithm {
         return resource.getMulticoreScore() != 0.0 ? (Math.max(resource.getMulticoreScore(),resource.getSingleCoreScore())) : (Math.max(resource.getOpenclScore(), resource.getVulkanScore()));
     }
 
+    public static boolean hasMinWorkingTime(Resource resource, Task task) {
+        DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
+        LocalTime currentTime = LocalTime.now();
+
+        Availability availability = resource.getAvailability().stream()
+                .filter(availability1 -> availability1.getDayOfWeek().equals(currentDay) &&
+                        !currentTime.isBefore(availability1.getStartTime()) &&
+                        !currentTime.isAfter(availability1.getEndTime()))
+                .findFirst().orElseThrow();
+
+        return availability.getEndTime().minusSeconds(availability.getStartTime().toSecondOfDay()).toSecondOfDay() >= task.getTaskDuration();
+    }
+
     /**
      * Verifica se la risorsa è adatta per la task
      * @param task task
@@ -124,6 +137,11 @@ public class AllocationAlgorithm {
 
         // Verifica se la risorsa è disponibile
         if (!resource.getIsAvailable()) {
+            return false;
+        }
+
+        //Controllo minWorkingTime
+        if (!hasMinWorkingTime(resource, task)) {
             return false;
         }
 
