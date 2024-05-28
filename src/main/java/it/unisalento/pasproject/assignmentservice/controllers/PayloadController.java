@@ -8,12 +8,15 @@ import it.unisalento.pasproject.assignmentservice.dto.PayloadRequestDTO;
 import it.unisalento.pasproject.assignmentservice.dto.PayloadResponseDTO;
 import it.unisalento.pasproject.assignmentservice.exceptions.WrongPayloadRequest;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static it.unisalento.pasproject.assignmentservice.security.SecurityConstants.ROLE_MEMBRO;
 
 /**
  * Gestisce le richieste dai payloads in arrivo, quali:
@@ -32,6 +35,7 @@ public class PayloadController {
 
     //Richiesta da chiamare quando il payload si avvia, la richiesta contiene l'id del membro
     @PostMapping(value="/resource/update")
+    @Secured(ROLE_MEMBRO)
     public AssignedResourceDTO startAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
 
         if (payloadRequestDTO.getAssignedResourceId() == null || payloadRequestDTO.getMemberEmail() == null) {
@@ -47,6 +51,16 @@ public class PayloadController {
 
         AssignedResource assignedResourceToUpdate = assignedResource.get();
         AssignedResourceDTO assignedResourceDTO = new AssignedResourceDTO();
+
+        //Security check
+        Optional<Resource> checkRes = allocationService.getResource(assignedResourceToUpdate.getHardwareId());
+        if(checkRes.isEmpty()) {
+            throw new WrongPayloadRequest("Resource not found");
+        }
+
+        if(!checkRes.get().getMemberEmail().equals(payloadRequestDTO.getMemberEmail())) {
+            throw new WrongPayloadRequest("Wrong request: Task not assigned to the member");
+        }
 
         Optional<TaskAssignment> taskAssignment = allocationService.getTaskAssignment(assignedResourceToUpdate.getTaskAssignmentId());
         if (taskAssignment.isPresent()) {
@@ -113,6 +127,7 @@ public class PayloadController {
      * @return Ritorna una lista con il nome di tutte le risorse (non deallocate) assegnate alla task
      */
     @PostMapping(value="/resource/info")
+    @Secured(ROLE_MEMBRO)
     public PayloadResponseDTO getAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
 
         if ( payloadRequestDTO.getAssignedResourceId() == null || payloadRequestDTO.getMemberEmail() == null ) {
@@ -129,6 +144,11 @@ public class PayloadController {
         Optional<Resource> resource = allocationService.getResource(assignedResource.get().getHardwareId());
         if(resource.isEmpty()) {
             throw new WrongPayloadRequest("Resource not found");
+        }
+
+        //Security check
+        if(!resource.get().getMemberEmail().equals(payloadRequestDTO.getMemberEmail())) {
+            throw new WrongPayloadRequest("Wrong request: Task not assigned to the member");
         }
 
         PayloadResponseDTO payloadResponseDTO = new PayloadResponseDTO();
