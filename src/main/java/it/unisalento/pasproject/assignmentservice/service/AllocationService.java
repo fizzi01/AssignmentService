@@ -80,7 +80,8 @@ public class AllocationService {
         if (assignedResource.isEmpty())
             return null;
         AssignedResource assigned = assignedResource.get();
-        return taskAssignmentRepository.findByAssignedResourcesContainsAndIsCompleteFalse(assigned);
+        Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assigned.getTaskAssignmentId());
+        return taskAssignment.orElse(null);
     }
 
     public void deallocateResources(TaskAssignment taskAssignment) {
@@ -199,7 +200,7 @@ public class AllocationService {
         sendResourceStatusMessage(resource);
     }
 
-    public AssignedResource assignResource(Resource resource) {
+    public AssignedResource assignResource(Resource resource, TaskAssignment taskAssignment) {
         //TODO: Vedere se serve qui un invio di update, sembra di no
         DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
         LocalTime currentTime = LocalTime.now();
@@ -223,6 +224,8 @@ public class AllocationService {
         assignedResource.setAssignedWorkingTimeInSeconds(availability.getEndTime().toSecondOfDay() - currentTime.toSecondOfDay());
 
         assignedResource.setHasCompleted(false);
+
+        assignedResource.setTaskAssignmentId(taskAssignment.getId());
 
         return assignedResourceRepository.save(assignedResource);
     }

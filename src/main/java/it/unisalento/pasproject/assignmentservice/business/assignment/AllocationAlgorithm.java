@@ -72,14 +72,13 @@ public class AllocationAlgorithm {
                     allocationService.updateResource(resource);
 
                     //Crea un AssignedResource e lo aggiunge alla lista delle risorse assegnate
-                    AssignedResource assigned = allocationService.assignResource(resource);
+                    AssignedResource assigned = allocationService.assignResource(resource, taskAssignment);
 
                     //Aggiorna la task assignment con la nuova risorsa assegnata
                     List<AssignedResource> assignedResources = taskAssignment.getAssignedResources();
                     if( assignedResources == null){
                         assignedResources = new ArrayList<>();
                     }
-                    assigned.setTaskAssignmentId(taskAssignment.getId());
 
                     assignedResources.add(assigned);
                     taskAssignment.setAssignedResources(assignedResources);
