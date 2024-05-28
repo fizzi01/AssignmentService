@@ -2,6 +2,7 @@ package it.unisalento.pasproject.assignmentservice.controllers;
 
 import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
+import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
 import it.unisalento.pasproject.assignmentservice.dto.AssignedResourceDTO;
 import it.unisalento.pasproject.assignmentservice.dto.PayloadRequestDTO;
 import it.unisalento.pasproject.assignmentservice.dto.PayloadResponseDTO;
@@ -47,26 +48,40 @@ public class PayloadController {
         AssignedResource assignedResourceToUpdate = assignedResource.get();
         AssignedResourceDTO assignedResourceDTO = new AssignedResourceDTO();
 
-        //In base a start o stop
-        if(payloadRequestDTO.getStart() != null && payloadRequestDTO.getStart()) {
-            //Aggiorno il tempo di inizio
-            assignedResourceToUpdate.setAssignedTime(LocalDateTime.now());
-            allocationService.updateAssignedResource(assignedResourceToUpdate);
+        Optional<TaskAssignment> taskAssignment = allocationService.getTaskAssignment(assignedResourceToUpdate.getTaskAssignmentId());
+        if (taskAssignment.isPresent()) {
+            TaskAssignment taskAssignmentNew = taskAssignment.get();
+            List<AssignedResource> assignedResources = taskAssignmentNew.getAssignedResources();
 
-            assignedResourceDTO.setAssignedTime(assignedResourceToUpdate.getAssignedTime());
+            //In base a start o stop
+            if(payloadRequestDTO.getStart() != null && payloadRequestDTO.getStart()) {
+                //Aggiorno il tempo di inizio
+                assignedResources.get(assignedResources.indexOf(assignedResourceToUpdate)).setAssignedTime(LocalDateTime.now());
+                allocationService.updateTaskAssignment(taskAssignmentNew);
+                allocationService.updateAssignedResource(assignedResourceToUpdate);
 
-            return assignedResourceDTO;
-        } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
-            //Aggiorno il tempo di fine
-            assignedResourceToUpdate.setCompletedTime(LocalDateTime.now());
-            allocationService.updateAssignedResource(assignedResourceToUpdate);
+                assignedResourceDTO.setAssignedTime(assignedResourceToUpdate.getAssignedTime());
 
-            assignedResourceDTO.setCompletedTime(assignedResourceToUpdate.getCompletedTime());
+                return assignedResourceDTO;
+            } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
+                //Aggiorno il tempo di fine
+                assignedResources.get(assignedResources.indexOf(assignedResourceToUpdate)).setCompletedTime(LocalDateTime.now());
+                allocationService.updateTaskAssignment(taskAssignmentNew);
+                allocationService.updateAssignedResource(assignedResourceToUpdate);
 
-            return assignedResourceDTO;
+                assignedResourceDTO.setCompletedTime(assignedResourceToUpdate.getCompletedTime());
+
+                return assignedResourceDTO;
+            } else {
+                throw new WrongPayloadRequest("Start or stop must be provided");
+            }
+
+
         } else {
-            throw new WrongPayloadRequest("Start or stop must be provided");
+            throw new WrongPayloadRequest("Task assignment not found");
         }
+
+
 
     }
 
