@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AssignmentWatcher {
@@ -37,38 +38,48 @@ public class AssignmentWatcher {
         //Prende tutte le Task che sono in running e che sono enabled
         allocationService.getRunningTasks().forEach(task -> {
             if (isTaskExpired(task)) {
-                LOGGER.info("Task " + task.getId() + " expired");
+                LOGGER.info("Task {} expired", task.getId());
                 //Completa la task
                 task.setRunning(false);
                 task.setEndTime(LocalDateTime.now());
+                deallocateAllResources(task);
                 allocationService.updateTask(task);
-                deallocateResources(task);
             }else if (allResourcesFinished(task)) {
-                LOGGER.info("Task " + task.getId() + " completed, all resources finished");
+                LOGGER.info("Task {} completed, all resources finished", task.getId());
                 //Completa la task
                 task.setRunning(false);
                 task.setEndTime(LocalDateTime.now());
-                allocationService.updateTask(task);
                 allocationService.completeTaskAssignment(task);
+                allocationService.updateTask(task);
             }
         });
 
-        //Prende tutti i membri assegnati e controlla se sono completati
+        //Prende tutte le AssignedResources e controlla se sono completati
         //Se completati dealloca le risorse, ma le lascia assegnate alla task per il calcolo del completamento
-        allocationService.getAssignedMembers().forEach(member -> {
-            if (isResourceCompleted(member)) {
+        allocationService.getAssignedMembers().forEach(assignedResource -> {
+            if (isResourceCompleted(assignedResource)) {
                 //Dealloca le risorsa
-                allocationService.deallocateResource(member);
+                allocationService.deallocateResource(assignedResource);
             }
         });
 
         //Prende tutte le risorse che sono isAvailable=false e controlla se il TaskAssignment a cui sono associate sia completed
         //Se completed le dealloca
         allocationService.getAssignedResources().forEach(resource -> {
+            LOGGER.info("Checking resource availability {}", resource.getId());
             TaskAssignment taskAssignment = allocationService.getActiveTaskAssignment(resource);
+
             if (taskAssignment != null && taskAssignment.getIsComplete()) {
-                allocationService.deallocateResource(resource);
-                LOGGER.info("Resource " + resource.getId() + " deallocated");
+
+                Optional<AssignedResource> assignedResource = allocationService.getAssignedResource(resource.getId());
+                if(assignedResource.isPresent()) {
+                    AssignedResource assigned = assignedResource.get();
+                    allocationService.deallocateResource(assigned);
+                }else{ //Fallback dealloca una risorsa assegnata volatile
+                    allocationService.deallocateResource(resource);
+                }
+
+                LOGGER.info("Resource {} deallocated", resource.getId());
             }
         });
     }
@@ -118,7 +129,7 @@ public class AssignmentWatcher {
      * Deallocate the resources used by the task
      * @param task the task to deallocate the resources
      */
-    private void deallocateResources(Task task) {
+    private void deallocateAllResources(Task task) {
         //Prende il task assignment che ha come taskId il task.id e che non è completed
         //Dealloca le risorse
         allocationService.deallocateResources(allocationService.getActiveTaskAssignment(task.getId()));

@@ -79,6 +79,8 @@ public class AllocationAlgorithm {
                     if( assignedResources == null){
                         assignedResources = new ArrayList<>();
                     }
+                    assigned.setTaskAssignmentId(taskAssignment.getId());
+
                     assignedResources.add(assigned);
                     taskAssignment.setAssignedResources(assignedResources);
 

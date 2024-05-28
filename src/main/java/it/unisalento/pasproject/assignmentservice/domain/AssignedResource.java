@@ -1,6 +1,5 @@
 package it.unisalento.pasproject.assignmentservice.domain;
 
-import com.mongodb.lang.NonNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 public class AssignedResource {
     @Id
     private String id;
+    private String taskAssignmentId;
 
     private String hardwareId;
 

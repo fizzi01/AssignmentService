@@ -90,33 +90,12 @@ public class AllocationService {
         //Prendo le risorse allocate per il task e le dealloco
         for (AssignedResource assigned : taskAssignment.getAssignedResources()) {
 
-            Resource resource = resourceRepository.findById(assigned.getHardwareId()).orElseThrow();
 
             if ( assigned.getCompletedTime() == null) //Risorsa non ancora avviata
                 continue;
 
-            if ( now.isAfter(assigned.getCompletedTime()) ) {
-
-                if ( !assigned.isHasCompleted() ) {
-                    assigned.setHasCompleted(true);
-                }
-
-
-            } else {
-                assigned.setCompletedTime(now);
-                assigned.setHasCompleted(true);
-            }
-
-            assignedResourceRepository.save(assigned);
-
+            //Dealloco Resource, AssignedResource (compreso nel TaskAssignment)
             deallocateResource(assigned);
-            /*if ( !resource.getIsAvailable() ){
-                resource.setIsAvailable(true);
-                resource.setCurrentTaskId(null);
-            }
-
-            resourceRepository.save(resource);*/
-            //TODO: forse basterebbe richiamare deallocateResource(assigned) riducendo ridondanza
         }
 
     }
@@ -127,11 +106,38 @@ public class AllocationService {
     }
 
     public void deallocateResource(AssignedResource assignedResource) {
+        LocalDateTime now = LocalDateTime.now();
+
         Resource resource = resourceRepository.findById(assignedResource.getHardwareId()).orElseThrow();
-        resource.setIsAvailable(true);
-        resource.setCurrentTaskId(null);
-        resourceRepository.save(resource);
-        sendResourceStatusMessage(resource);
+
+        Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assignedResource.getTaskAssignmentId());
+
+        //Aggiorno TaskAssignment per completare il deallocamento della risorsa
+        if (taskAssignment.isPresent()) {
+            TaskAssignment taskAssignmentNew = taskAssignment.get();
+            List<AssignedResource> assignedResources = taskAssignmentNew.getAssignedResources();
+            assignedResources.get(assignedResources.indexOf(assignedResource)).setHasCompleted(true);
+            taskAssignmentRepository.save(taskAssignmentNew);
+        }
+
+        // Aggiorno AssignedResource per completare il deallocamento della risorsa
+        if(assignedResource.getCompletedTime() == null || assignedResource.getCompletedTime().isAfter(now))
+            assignedResource.setCompletedTime(now);
+
+        if ( now.isAfter(assignedResource.getCompletedTime()) ) {
+
+            if ( !assignedResource.isHasCompleted() ) {
+                assignedResource.setHasCompleted(true);
+            }
+
+        } else {
+            assignedResource.setCompletedTime(now);
+            assignedResource.setHasCompleted(true);
+        }
+
+        assignedResourceRepository.save(assignedResource);
+
+        deallocateResource(resource);
     }
 
     public void deallocateResource(Resource resource) {
