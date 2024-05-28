@@ -1,9 +1,7 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.domain.*;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.ResourceStatusMessageDTO;
-import it.unisalento.pasproject.assignmentservice.dto.TaskMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.TaskStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.AssignedResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
@@ -13,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,17 +108,13 @@ public class AllocationService {
     public void deallocateResource(AssignedResource assignedResource) {
         LocalDateTime now = LocalDateTime.now();
 
-        Resource resource = resourceRepository.findById(assignedResource.getHardwareId()).orElseThrow();
+        Optional<Resource> retResource = resourceRepository.findById(assignedResource.getHardwareId());
+        if (retResource.isEmpty())
+            return;
+
+        Resource resource = retResource.get();
 
         Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assignedResource.getTaskAssignmentId());
-
-        //Aggiorno TaskAssignment per completare il deallocamento della risorsa
-        if (taskAssignment.isPresent()) {
-            TaskAssignment taskAssignmentNew = taskAssignment.get();
-            List<AssignedResource> assignedResources = taskAssignmentNew.getAssignedResources();
-            assignedResources.get(assignedResources.indexOf(assignedResource)).setHasCompleted(true);
-            taskAssignmentRepository.save(taskAssignmentNew);
-        }
 
         // Aggiorno AssignedResource per completare il deallocamento della risorsa
         if(assignedResource.getCompletedTime() == null || assignedResource.getCompletedTime().isAfter(now))
@@ -134,6 +129,23 @@ public class AllocationService {
         } else {
             assignedResource.setCompletedTime(now);
             assignedResource.setHasCompleted(true);
+        }
+
+        //Aggiorno TaskAssignment per completare il deallocamento della risorsa
+        if (taskAssignment.isPresent()) {
+            TaskAssignment taskAssignmentNew = taskAssignment.get();
+            List<AssignedResource> assignedResources = new ArrayList<>(taskAssignmentNew.getAssignedResources());
+
+            for (AssignedResource res : assignedResources) {
+                if (res.getId().equals(assignedResource.getId())) {
+                    res.setCompletedTime(assignedResource.getCompletedTime());
+                    res.setHasCompleted(true);
+                }
+            }
+
+            taskAssignmentNew.setAssignedResources(assignedResources);
+
+            taskAssignmentRepository.save(taskAssignmentNew);
         }
 
         assignedResourceRepository.save(assignedResource);

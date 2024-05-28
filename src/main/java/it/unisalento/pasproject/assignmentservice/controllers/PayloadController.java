@@ -51,12 +51,24 @@ public class PayloadController {
         Optional<TaskAssignment> taskAssignment = allocationService.getTaskAssignment(assignedResourceToUpdate.getTaskAssignmentId());
         if (taskAssignment.isPresent()) {
             TaskAssignment taskAssignmentNew = taskAssignment.get();
-            List<AssignedResource> assignedResources = taskAssignmentNew.getAssignedResources();
+            List<AssignedResource> assignedResources = new ArrayList<>(taskAssignmentNew.getAssignedResources());
 
             //In base a start o stop
             if(payloadRequestDTO.getStart() != null && payloadRequestDTO.getStart()) {
                 //Aggiorno il tempo di inizio
-                assignedResources.get(assignedResources.indexOf(assignedResourceToUpdate)).setAssignedTime(LocalDateTime.now());
+                try {
+
+                    for (AssignedResource res : assignedResources) {
+                        if (res.getId().equals(assignedResourceToUpdate.getId())) {
+                            res.setAssignedTime(LocalDateTime.now());
+                        }
+                    }
+
+                    taskAssignmentNew.setAssignedResources(assignedResources);
+                } catch (Exception e) {
+                    throw new WrongPayloadRequest("Assigned resource not found in task assignment: " + e.getMessage());
+                }
+
                 allocationService.updateTaskAssignment(taskAssignmentNew);
                 allocationService.updateAssignedResource(assignedResourceToUpdate);
 
@@ -65,7 +77,18 @@ public class PayloadController {
                 return assignedResourceDTO;
             } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
                 //Aggiorno il tempo di fine
-                assignedResources.get(assignedResources.indexOf(assignedResourceToUpdate)).setCompletedTime(LocalDateTime.now());
+                try {
+                    for (AssignedResource res : assignedResources) {
+                        if (res.getId().equals(assignedResourceToUpdate.getId())) {
+                            res.setCompletedTime(LocalDateTime.now());
+                        }
+                    }
+
+                    taskAssignmentNew.setAssignedResources(assignedResources);
+                }catch (Exception e) {
+                    throw new WrongPayloadRequest("Assigned resource not found in task assignment");
+                }
+
                 allocationService.updateTaskAssignment(taskAssignmentNew);
                 allocationService.updateAssignedResource(assignedResourceToUpdate);
 

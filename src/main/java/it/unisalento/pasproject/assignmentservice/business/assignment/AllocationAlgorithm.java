@@ -35,7 +35,6 @@ public class AllocationAlgorithm {
      */
     public void assignResources(List<Task> tasks, List<Resource> resources) {
         for (Task task : tasks) {
-            LOGGER.info("Assigning resources to task " + task.getId());
             TaskAssignment taskAssignment = allocationService.getTaskAssignment(task);
 
             double totalComputingPower = getCurrentComputingPower(taskAssignment.getAssignedResources());
@@ -47,7 +46,6 @@ public class AllocationAlgorithm {
             }
 
             for (Resource resource : resources) {
-                LOGGER.info("Checking resource " + resource.getId());
 
                 //Non considera più le task già assegnate
                 if ( isAlreadyAssigned(taskAssignment.getAssignedResources(),resource)){
@@ -57,15 +55,15 @@ public class AllocationAlgorithm {
 
                 // Verifichiamo che si siano raggiunti i limiti di potenza computazionale
                 if ( task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0 ) {
-                    LOGGER.info("Task " + task.getId() + " reached max computing power");
+                    LOGGER.info("Task {} reached max computing power", task.getId());
                     continue;
                 } else if ( task.getMaxCudaPower() - totalCudaPower < CUDA_THRESHOLD && task.getMaxCudaPower() > 0.0){
-                    LOGGER.info("Task " + task.getId() + " reached max cuda power");
+                    LOGGER.info("Task {} reached max cuda power", task.getId());
                     continue;
                 }
 
                 if (isSuitableResource(task, resource, totalComputingPower)) {
-                    LOGGER.info("Assigning resource " + resource.getId() + " to task " + task.getId());
+                    LOGGER.info("Assigning resource {} to task {}", resource.getId(), task.getId());
                     // Assegna la risorsa alla task
                     resource.setIsAvailable(false);
                     resource.setCurrentTaskId(task.getId());
@@ -75,25 +73,23 @@ public class AllocationAlgorithm {
                     AssignedResource assigned = allocationService.assignResource(resource, taskAssignment);
 
                     //Aggiorna la task assignment con la nuova risorsa assegnata
-                    List<AssignedResource> assignedResources = taskAssignment.getAssignedResources();
-                    if( assignedResources == null){
-                        assignedResources = new ArrayList<>();
+                    List<AssignedResource> assignedResources = new ArrayList<>(taskAssignment.getAssignedResources());
+                    if (assignedResources.isEmpty()) {
+                        LOGGER.info("No resources assigned to task {}", task.getId());
                     }
-
                     assignedResources.add(assigned);
                     taskAssignment.setAssignedResources(assignedResources);
 
-                    for (AssignedResource assignedResource : taskAssignment.getAssignedResources()) {
-                        LOGGER.info("Assigned resource: {}", assignedResource.getId());
-                    }
                     taskAssignment = allocationService.updateTaskAssignment(taskAssignment);
+
+                    LOGGER.info("Resource " + resource.getId() + " assigned to task " + task.getId());
 
                     // Aggiorna la potenza computazionale totale
                     totalComputingPower += getComputationalPower(assigned);
                     totalCudaPower += getCudaPower(assigned);
 
                 } else {
-                    LOGGER.info("Resource " + resource.getId() + " not suitable for task " + task.getId());
+                    LOGGER.info("Resource {} not suitable for task {}", resource.getId(), task.getId());
                 }
             }
         }
@@ -101,7 +97,13 @@ public class AllocationAlgorithm {
 
 
     public static boolean isAlreadyAssigned(List<AssignedResource> assignedResourceList,Resource resource) {
-        return assignedResourceList.contains(resource);
+
+        for (AssignedResource assignedResource : assignedResourceList) {
+            if (assignedResource.getHardwareId().equals(resource.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static double getCurrentComputingPower(List<AssignedResource> assignedResources) {
@@ -122,10 +124,6 @@ public class AllocationAlgorithm {
 
     public static double getCudaPower(AssignedResource resource) {
         return resource.getAssignedCudaScore();
-    }
-
-    public static double getCudaPower(Resource resource) {
-        return resource.getCudaScore();
     }
 
 
