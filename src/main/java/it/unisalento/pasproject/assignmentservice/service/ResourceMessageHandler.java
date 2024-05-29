@@ -29,12 +29,6 @@ public class ResourceMessageHandler {
     @Value("${rabbitmq.exchange.data.name}")
     private String dataExchange;
 
-    @Value("${rabbitmq.exchange.notification.name}")
-    private String notificationExchange;
-
-    @Value("${rabbitmq.routing.notification.key}")
-    private String notificationTopic;
-
     private final ResourceService resourceService;
     private final MessageProducer messageProducer;
     private final ResourceRepository resourceRepository;
