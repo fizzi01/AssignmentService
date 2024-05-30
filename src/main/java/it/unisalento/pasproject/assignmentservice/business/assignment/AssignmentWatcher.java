@@ -42,6 +42,7 @@ public class AssignmentWatcher {
                 //Completa la task
                 task.setRunning(false);
                 task.setEndTime(LocalDateTime.now());
+
                 deallocateAllResources(task);
                 allocationService.updateTask(task);
             }else if (allResourcesFinished(task)) {

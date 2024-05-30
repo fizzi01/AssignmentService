@@ -19,7 +19,7 @@ import static it.unisalento.pasproject.assignmentservice.business.assignment.Ass
 @Component
 public class AllocationAlgorithm {
 
-    public AllocationService allocationService;
+    public final AllocationService allocationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AllocationAlgorithm.class);
 
@@ -40,7 +40,7 @@ public class AllocationAlgorithm {
             double totalComputingPower = getCurrentComputingPower(taskAssignment.getAssignedResources());
             double totalCudaPower = getCurrentCudaPower(taskAssignment.getAssignedResources());
 
-            if(!task.getEnabled()){
+            if(Boolean.FALSE.equals(task.getEnabled())){
                 task.setEnabled(true);
                 allocationService.updateTask(task);
             }
@@ -49,7 +49,7 @@ public class AllocationAlgorithm {
 
                 //Non considera più le task già assegnate
                 if ( isAlreadyAssigned(taskAssignment.getAssignedResources(),resource)){
-                    LOGGER.info("Resource " + resource.getId() + " already assigned to task " + task.getId());
+                    LOGGER.info("Resource {} already assigned to task {} ", resource.getId(), task.getId());
                     continue;
                 }
 
@@ -82,14 +82,15 @@ public class AllocationAlgorithm {
 
                     taskAssignment = allocationService.updateTaskAssignment(taskAssignment);
 
-                    LOGGER.info("Resource " + resource.getId() + " assigned to task " + task.getId());
+                    // Notifica l'aggiornamento
+                    allocationService.sendAssignmentData(assigned, resource);
+
+                    LOGGER.info("Resource {} assigned to task {}", resource.getId(), task.getId());
 
                     // Aggiorna la potenza computazionale totale
                     totalComputingPower += getComputationalPower(assigned);
                     totalCudaPower += getCudaPower(assigned);
 
-                } else {
-                    LOGGER.info("Resource {} not suitable for task {}", resource.getId(), task.getId());
                 }
             }
         }
@@ -159,7 +160,7 @@ public class AllocationAlgorithm {
         double actualComputationalPower = getComputationalPower(resource);
 
         // Verifica se la risorsa è disponibile
-        if (!resource.getIsAvailable()) {
+        if (Boolean.FALSE.equals(resource.getIsAvailable())) {
             return false;
         }
 

@@ -26,17 +26,19 @@ public class AllocationService {
 
     private final TasksMessageHandler tasksMessageHandler;
     private final ResourceMessageHandler resourcesMessageHandler;
+    private final AnalyticsMessageHandler analyticsMessageHandler;
 
     @Autowired
     public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository,
                              ResourceRepository resourceRepository, AssignedResourceRepository assignedMemberRepository,
-                             TasksMessageHandler tasksMessageHandler, ResourceMessageHandler resourcesMessageHandler) {
+                             TasksMessageHandler tasksMessageHandler, ResourceMessageHandler resourcesMessageHandler, AnalyticsMessageHandler analyticsMessageHandler) {
         this.taskRepository = taskRepository;
         this.taskAssignmentRepository = taskAssignmentRepository;
         this.resourceRepository = resourceRepository;
         this.assignedResourceRepository = assignedMemberRepository;
         this.tasksMessageHandler = tasksMessageHandler;
         this.resourcesMessageHandler = resourcesMessageHandler;
+        this.analyticsMessageHandler = analyticsMessageHandler;
     }
 
     public List<Task> getAvailableTasks() {
@@ -85,7 +87,6 @@ public class AllocationService {
 
     public void deallocateResources(TaskAssignment taskAssignment) {
         completeTaskAssignment(taskAssignment);
-        LocalDateTime now = LocalDateTime.now();
 
         //Prendo le risorse allocate per il task e le dealloco
         for (AssignedResource assigned : taskAssignment.getAssignedResources()) {
@@ -151,6 +152,10 @@ public class AllocationService {
         assignedResourceRepository.save(assignedResource);
 
         deallocateResource(resource);
+
+        //Send message of resource deallocation
+        updateAssignmentData(assignedResource, resource);
+
     }
 
     public void deallocateResource(Resource resource) {
@@ -170,6 +175,9 @@ public class AllocationService {
         taskAssignment.setIsComplete(true);
         taskAssignment.setCompletedTime(LocalDateTime.now());
         taskAssignmentRepository.save(taskAssignment);
+
+        //Send Assignment data
+        updateTaskAssignment(taskAssignment);
     }
 
     public void completeTaskAssignment(TaskAssignment taskAssignment){
@@ -190,6 +198,10 @@ public class AllocationService {
             assignment.setIdTask(task.getId());
             assignment.setIsComplete(false);
             assignment.setAssignedResources(List.of());
+
+            // Send Assignment data
+            sendAssignmentData(assignment);
+
             return taskAssignmentRepository.save(assignment);
         }
 
@@ -233,7 +245,7 @@ public class AllocationService {
         assignedResource.setAssignedEnergyConsumptionPerHour(resource.getKWh());
 
         assignedResource.setHardwareId(resource.getId());
-        assignedResource.setAssignedWorkingTimeInSeconds(availability.getEndTime().toSecondOfDay() - currentTime.toSecondOfDay());
+        assignedResource.setAssignedWorkingTimeInSeconds((long)availability.getEndTime().toSecondOfDay() - (long)currentTime.toSecondOfDay());
 
         assignedResource.setHasCompleted(false);
 
@@ -304,5 +316,22 @@ public class AllocationService {
 
     public void updateAssignedResource(AssignedResource assignedResource) {
         assignedResourceRepository.save(assignedResource);
+    }
+
+
+    public void updateAssignmentData(AssignedResource assignedResource, Resource resource) {
+        analyticsMessageHandler.updateAssignmentData(assignedResource, resource);
+    }
+
+    public void sendAssignmentData(AssignedResource assignedResource, Resource resource) {
+        analyticsMessageHandler.updateAssignmentData(assignedResource, resource);
+    }
+
+    public void updateAssignmentData(TaskAssignment taskAssignment){
+        analyticsMessageHandler.updateAssignmentData(taskAssignment);
+    }
+
+    public void sendAssignmentData(TaskAssignment taskAssignment){
+        analyticsMessageHandler.sendAssignmentData(taskAssignment);
     }
 }
