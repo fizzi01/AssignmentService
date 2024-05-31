@@ -9,6 +9,9 @@ import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
 import it.unisalento.pasproject.assignmentservice.dto.analytics.AnalyticsMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.analytics.AssignedAnalyticsDTO;
 import it.unisalento.pasproject.assignmentservice.dto.analytics.AssignedResourceAnalyticsDTO;
+import it.unisalento.pasproject.assignmentservice.repositories.TaskAssignmentRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,13 +29,15 @@ public class AnalyticsMessageHandler {
     private String sendUpdatedAssignmentDataRoutingKey;
 
     private final MessageProducer messageProducer;
-    private final AllocationService allocationService;
+    private final TaskAssignmentRepository taskAssignmentRepository;
     private final TaskService taskService;
 
-    public AnalyticsMessageHandler(MessageProducer messageProducer, @Qualifier("RabbitMQProducer") MessageProducerStrategy messageProducerStrategy, AllocationService allocationService, TaskService taskService) {
+
+    @Autowired
+    public AnalyticsMessageHandler(MessageProducer messageProducer, @Qualifier("RabbitMQProducer") MessageProducerStrategy messageProducerStrategy, TaskAssignmentRepository taskAssignmentRepository, TaskService taskService) {
         this.messageProducer = messageProducer;
         this.messageProducer.setStrategy(messageProducerStrategy);
-        this.allocationService = allocationService;
+        this.taskAssignmentRepository = taskAssignmentRepository;
         this.taskService = taskService;
     }
 
@@ -41,7 +46,8 @@ public class AnalyticsMessageHandler {
         //Data fusion dei dati di assegnamento e di risorsa nel AssignedResourceAnalyticsDTO
 
         //Recupero il TaskAssignment
-        Optional<TaskAssignment> taskAssignment = allocationService.getTaskAssignment(assignedResource.getTaskAssignmentId());
+        Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assignedResource.getTaskAssignmentId());
+
 
         if (taskAssignment.isEmpty()) {
             return;
@@ -50,6 +56,7 @@ public class AnalyticsMessageHandler {
         TaskAssignment taskAssignmentEntity = taskAssignment.get();
 
         Optional<Task> task = taskService.getTask(taskAssignmentEntity.getIdTask());
+
         if (task.isEmpty()) {
             return;
         }
@@ -86,6 +93,7 @@ public class AnalyticsMessageHandler {
         LocalDateTime now = LocalDateTime.now();
 
         Optional<Task> task = taskService.getTask(taskAssignment.getIdTask());
+
         if (task.isEmpty()) {
             return;
         }

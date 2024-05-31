@@ -54,7 +54,7 @@ public class TasksMessageHandler {
     @RabbitListener(queues = "${rabbitmq.queue.newtask.name}")
     public void handleNewTask(TaskMessageDTO taskMessageDTO) {
 
-        Optional<Task> task = Optional.ofNullable(taskRepository.findByIdTask(taskMessageDTO.getId()));
+        Optional<Task> task = taskRepository.findByIdTask(taskMessageDTO.getId());
 
         Task newTask = new Task();
 

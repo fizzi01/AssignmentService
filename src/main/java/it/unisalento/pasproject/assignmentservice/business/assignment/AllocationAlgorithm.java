@@ -49,21 +49,21 @@ public class AllocationAlgorithm {
 
                 //Non considera più le task già assegnate
                 if ( isAlreadyAssigned(taskAssignment.getAssignedResources(),resource)){
-                    LOGGER.info("Resource {} already assigned to task {} ", resource.getId(), task.getId());
+                    LOGGER.debug("Resource {} already assigned to task {} ", resource.getId(), task.getId());
                     continue;
                 }
 
                 // Verifichiamo che si siano raggiunti i limiti di potenza computazionale
                 if ( task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0 ) {
-                    LOGGER.info("Task {} reached max computing power", task.getId());
+                    LOGGER.debug("Task {} reached max computing power", task.getId());
                     continue;
                 } else if ( task.getMaxCudaPower() - totalCudaPower < CUDA_THRESHOLD && task.getMaxCudaPower() > 0.0){
-                    LOGGER.info("Task {} reached max cuda power", task.getId());
+                    LOGGER.debug("Task {} reached max cuda power", task.getId());
                     continue;
                 }
 
                 if (isSuitableResource(task, resource, totalComputingPower)) {
-                    LOGGER.info("Assigning resource {} to task {}", resource.getId(), task.getId());
+                    LOGGER.debug("Assigning resource {} to task {}", resource.getId(), task.getId());
                     // Assegna la risorsa alla task
                     resource.setIsAvailable(false);
                     resource.setCurrentTaskId(task.getId());
@@ -75,7 +75,7 @@ public class AllocationAlgorithm {
                     //Aggiorna la task assignment con la nuova risorsa assegnata
                     List<AssignedResource> assignedResources = new ArrayList<>(taskAssignment.getAssignedResources());
                     if (assignedResources.isEmpty()) {
-                        LOGGER.info("No resources assigned to task {}", task.getId());
+                        LOGGER.debug("No resources assigned to task {}", task.getId());
                     }
                     assignedResources.add(assigned);
                     taskAssignment.setAssignedResources(assignedResources);
@@ -85,7 +85,7 @@ public class AllocationAlgorithm {
                     // Notifica l'aggiornamento
                     allocationService.sendAssignmentData(assigned, resource);
 
-                    LOGGER.info("Resource {} assigned to task {}", resource.getId(), task.getId());
+                    LOGGER.debug("Resource {} assigned to task {}", resource.getId(), task.getId());
 
                     // Aggiorna la potenza computazionale totale
                     totalComputingPower += getComputationalPower(assigned);
@@ -159,33 +159,43 @@ public class AllocationAlgorithm {
     public boolean isSuitableResource(Task task, Resource resource,double currentComputingPower) {
         double actualComputationalPower = getComputationalPower(resource);
 
+        LOGGER.debug("Computational power: {}", actualComputationalPower);
+        LOGGER.debug("Current computational power: {}", currentComputingPower);
+        LOGGER.debug("Checking if is available");
         // Verifica se la risorsa è disponibile
         if (Boolean.FALSE.equals(resource.getIsAvailable())) {
             return false;
         }
 
+        LOGGER.debug("Checking if has min working time");
         //Controllo minWorkingTime
         if (!hasMinWorkingTime(resource, task)) {
             return false;
         }
 
+        LOGGER.debug("Checking if has enough energy");
+        LOGGER.debug("Resource energy: {}", resource.getKWh());
+        LOGGER.debug("Task energy: {}", task.getMaxEnergyConsumption());
         //Controllo non si superi la maxEnergyConsumption
         if (resource.getKWh() > task.getMaxEnergyConsumption()) {
             return false;
         }
 
+        LOGGER.debug("Checking if has enough power");
         // Controlla se l'aggiunta della risorsa supera la potenza computazionale massima
         double projectedComputingPower = currentComputingPower + actualComputationalPower;
         if (projectedComputingPower > task.getMaxComputingPower()) {
             return false;
         }
 
+        LOGGER.debug("Checking if has enough power");
         // Controlla la potenza computazionale minima e massima
         double minComputingPower = task.getMinComputingPower() != null ? task.getMinComputingPower() : 0;
         if (actualComputationalPower < minComputingPower || actualComputationalPower > task.getMaxComputingPower()) {
             return false;
         }
 
+        LOGGER.debug("Checking if has enough cuda power");
         // Controlla la potenza CUDA minima e massima, se specificate
         if ((task.getMinCudaPower() != null && task.getMinCudaPower() != 0.0) && resource.getCudaScore() < task.getMinCudaPower()) {
             return false;

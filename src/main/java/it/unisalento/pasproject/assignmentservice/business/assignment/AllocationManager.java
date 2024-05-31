@@ -3,6 +3,8 @@ package it.unisalento.pasproject.assignmentservice.business.assignment;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,9 @@ public class AllocationManager {
 
     private final AllocationAlgorithm allocationAlgorithm;
     private final AllocationService allocationService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AllocationManager.class);
+
 
     @Autowired
     public AllocationManager(AllocationAlgorithm allocationAlgorithm, AllocationService allocationService) {
@@ -36,6 +41,8 @@ public class AllocationManager {
 
         //Prende tutte le risorse disponibili
         List<Resource> resources = allocationService.getAvailableResources();
+
+        LOGGER.info("Found {} tasks and {} resources", tasks.size(), resources.size());
 
         allocationAlgorithm.assignResources(tasks, resources);
     }
