@@ -1,13 +1,10 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
-import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchangeStrategy;
-import it.unisalento.pasproject.assignmentservice.business.io.exchanger.MessageExchanger;
 import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageProducer;
 import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageProducerStrategy;
-import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
-import it.unisalento.pasproject.assignmentservice.dto.TaskMessageDTO;
-import it.unisalento.pasproject.assignmentservice.dto.TaskStatusMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.task.TaskMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.task.TaskStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

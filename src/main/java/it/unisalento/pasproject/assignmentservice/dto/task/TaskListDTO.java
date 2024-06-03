@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.assignmentservice.dto;
+package it.unisalento.pasproject.assignmentservice.dto.task;
 
 import lombok.Getter;
 import lombok.Setter;

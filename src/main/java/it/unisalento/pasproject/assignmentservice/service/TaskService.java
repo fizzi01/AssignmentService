@@ -1,7 +1,7 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.domain.Task;
-import it.unisalento.pasproject.assignmentservice.dto.TaskDTO;
+import it.unisalento.pasproject.assignmentservice.dto.task.TaskDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

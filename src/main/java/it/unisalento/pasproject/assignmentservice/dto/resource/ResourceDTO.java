@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.assignmentservice.dto;
+package it.unisalento.pasproject.assignmentservice.dto.resource;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import it.unisalento.pasproject.assignmentservice.domain.Availability;

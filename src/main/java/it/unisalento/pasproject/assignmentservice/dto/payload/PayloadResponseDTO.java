@@ -1,9 +1,7 @@
-package it.unisalento.pasproject.assignmentservice.dto;
+package it.unisalento.pasproject.assignmentservice.dto.payload;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter

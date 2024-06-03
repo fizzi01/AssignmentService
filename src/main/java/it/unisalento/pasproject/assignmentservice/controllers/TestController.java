@@ -1,12 +1,11 @@
 package it.unisalento.pasproject.assignmentservice.controllers;
 
 import it.unisalento.pasproject.assignmentservice.domain.Task;
-import it.unisalento.pasproject.assignmentservice.dto.TaskDTO;
-import it.unisalento.pasproject.assignmentservice.dto.TaskListDTO;
+import it.unisalento.pasproject.assignmentservice.dto.task.TaskDTO;
+import it.unisalento.pasproject.assignmentservice.dto.task.TaskListDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import it.unisalento.pasproject.assignmentservice.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

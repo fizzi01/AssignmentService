@@ -1,12 +1,10 @@
-package it.unisalento.pasproject.assignmentservice.exceptions;
+package it.unisalento.pasproject.assignmentservice.exceptions.global;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor

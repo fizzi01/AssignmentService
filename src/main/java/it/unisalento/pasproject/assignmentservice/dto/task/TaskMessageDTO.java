@@ -1,25 +1,28 @@
-package it.unisalento.pasproject.assignmentservice.dto;
+package it.unisalento.pasproject.assignmentservice.dto.task;
+
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class TaskDTO {
-
-    private String idTask;
+@Setter
+public class TaskMessageDTO {
 
     /**
-     * The email of the user who created the task.
+     * The unique identifier of the task.
      */
+    private String id;
 
+    /**
+     * The email of the user who is associated with the task.
+     */
     private String emailUtente;
 
     /**
      * The maximum computing power that the task can use.
+     * This is a measure of how much computational resources the task can consume.
      */
-
-    private Double maxComputingPower;
+    private double maxComputingPower;
 
     /**
      * The maximum cuda power that the task can use.
@@ -34,27 +37,32 @@ public class TaskDTO {
     /**
      * The expected duration of the task, in seconds.
      */
-    private Double taskDuration;
+    private double taskDuration;
 
     /**
      * The maximum energy consumption of the task.
+     * This is a measure of how much energy the task can consume.
      */
-    private Double maxEnergyConsumption;
+    private double maxEnergyConsumption;
 
     /**
      * The minimum computing power that the task requires.
+     * This is a measure of the minimum computational resources the task needs to run.
      */
-    private Double minComputingPower;
+    private double minComputingPower;
 
     /**
      * The minimum energy consumption of the task.
+     * This is a measure of the minimum energy the task needs to run.
      */
-    private Double minEnergyConsumption;
+    private double minEnergyConsumption;
 
     /**
      * The minimum working time of the task, in seconds.
+     * This is a measure of the minimum time the task needs to complete its operation.
      */
-    private Double minWorkingTime;
+    private double minWorkingTime;
+
 
     /**
      * The current status of the task.
@@ -67,5 +75,4 @@ public class TaskDTO {
      * If true, the task is enabled. If false, the task is disabled.
      */
     private Boolean enabled;
-
 }

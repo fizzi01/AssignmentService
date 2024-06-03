@@ -2,9 +2,8 @@ package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.io.producer.MessageProducer;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
-import it.unisalento.pasproject.assignmentservice.dto.MessageDTO;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceMessageDTO;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceStatusMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

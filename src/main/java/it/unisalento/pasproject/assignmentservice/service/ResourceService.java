@@ -1,8 +1,8 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceDTO;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceMessageDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

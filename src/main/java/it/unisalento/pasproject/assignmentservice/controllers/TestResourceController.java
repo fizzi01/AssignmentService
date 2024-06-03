@@ -1,8 +1,8 @@
 package it.unisalento.pasproject.assignmentservice.controllers;
 
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceDTO;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceListDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceListDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.assignmentservice.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;

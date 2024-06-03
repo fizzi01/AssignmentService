@@ -1,8 +1,8 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.domain.*;
-import it.unisalento.pasproject.assignmentservice.dto.ResourceStatusMessageDTO;
-import it.unisalento.pasproject.assignmentservice.dto.TaskStatusMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceStatusMessageDTO;
+import it.unisalento.pasproject.assignmentservice.dto.task.TaskStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.AssignedResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskAssignmentRepository;

@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.assignmentservice.exceptions;
+package it.unisalento.pasproject.assignmentservice.exceptions.global;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
