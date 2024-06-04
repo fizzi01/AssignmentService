@@ -77,10 +77,12 @@ public class AllocationService {
     }
 
     public TaskAssignment getActiveTaskAssignment(Resource resource) {
-        Optional<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareId(resource.getId());
+        List<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareIdAndHasCompletedFalse(resource.getId());
         if (assignedResource.isEmpty())
             return null;
-        AssignedResource assigned = assignedResource.get();
+
+        AssignedResource assigned = assignedResource.getFirst();
+
         Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assigned.getTaskAssignmentId());
         return taskAssignment.orElse(null);
     }
@@ -137,10 +139,12 @@ public class AllocationService {
             TaskAssignment taskAssignmentNew = taskAssignment.get();
             List<AssignedResource> assignedResources = new ArrayList<>(taskAssignmentNew.getAssignedResources());
 
-            for (AssignedResource res : assignedResources) {
+            for (int i = 0; i < assignedResources.size(); i++) {
+                AssignedResource res = assignedResources.get(i);
                 if (res.getId().equals(assignedResource.getId())) {
                     res.setCompletedTime(assignedResource.getCompletedTime());
                     res.setHasCompleted(true);
+                    assignedResources.set(i, res); // Aggiorna l'elemento nella lista
                 }
             }
 

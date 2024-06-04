@@ -12,5 +12,5 @@ public interface AssignedResourceRepository extends MongoRepository<AssignedReso
 
     boolean existsByHardwareIdAndHasCompletedTrue(String id);
 
-    Optional<AssignedResource> findByHardwareId(String id);
+    List<AssignedResource> findByHardwareIdAndHasCompletedFalse(String id);
 }
