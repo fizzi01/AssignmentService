@@ -55,14 +55,9 @@ public class AssignmentWatcher {
             }
         });
 
-        //Prende tutte le AssignedResources e controlla se sono completati
-        //Se completati dealloca le risorse, ma le lascia assegnate alla task per il calcolo del completamento
-        allocationService.getAssignedMembers().forEach(assignedResource -> {
-            if (isResourceCompleted(assignedResource)) {
-                //Dealloca le risorsa
-                allocationService.deallocateResource(assignedResource);
-            }
-        });
+        //Prende tutte le AssignedResources che hanno completed time passato e che non hanno isComplete=true
+        //Quindi dealloca forzatamente le risorse
+        allocationService.getAssignedMembers().forEach(allocationService::deallocateResource);
 
         //Prende tutte le risorse che sono isAvailable=false e controlla se il TaskAssignment a cui sono associate sia completed
         //Se completed le dealloca
@@ -72,7 +67,8 @@ public class AssignmentWatcher {
 
             if (taskAssignment != null && taskAssignment.getIsComplete()) {
 
-                Optional<AssignedResource> assignedResource = allocationService.getAssignedResource(resource.getId());
+                Optional<AssignedResource> assignedResource = allocationService.getAssignedResource(resource, taskAssignment);
+
                 if(assignedResource.isPresent()) {
                     AssignedResource assigned = assignedResource.get();
                     allocationService.deallocateResource(assigned);

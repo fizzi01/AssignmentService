@@ -14,6 +14,7 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +28,8 @@ public class AllocationService {
     private final TasksMessageHandler tasksMessageHandler;
     private final ResourceMessageHandler resourcesMessageHandler;
     private final AnalyticsMessageHandler analyticsMessageHandler;
+
+    private static final Logger LOGGER = Logger.getLogger(AllocationService.class.getName());
 
     @Autowired
     public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository,
@@ -88,7 +91,6 @@ public class AllocationService {
     }
 
     public void deallocateResources(TaskAssignment taskAssignment) {
-        completeTaskAssignment(taskAssignment);
 
         //Prendo le risorse allocate per il task e le dealloco
         for (AssignedResource assigned : taskAssignment.getAssignedResources()) {
@@ -101,11 +103,13 @@ public class AllocationService {
             deallocateResource(assigned);
         }
 
+        completeTaskAssignment(taskAssignment);
+
     }
 
     public List<AssignedResource> getAssignedMembers() {
         //Restituisce gli assigned member che hanno completedTime > now
-        return assignedResourceRepository.findByCompletedTimeAfter(LocalDateTime.now());
+        return assignedResourceRepository.findByCompletedTimeAfterAndHasCompletedFalse(LocalDateTime.now());
     }
 
     public void deallocateResource(AssignedResource assignedResource) {
@@ -144,6 +148,7 @@ public class AllocationService {
                 if (res.getId().equals(assignedResource.getId())) {
                     res.setCompletedTime(assignedResource.getCompletedTime());
                     res.setHasCompleted(true);
+                    LOGGER.info("Resource " + res.getHardwareId() + " has completed");
                     assignedResources.set(i, res); // Aggiorna l'elemento nella lista
                 }
             }
@@ -270,6 +275,10 @@ public class AllocationService {
 
     public Optional<AssignedResource> getAssignedResource(String id){
         return assignedResourceRepository.findById(id);
+    }
+
+    public Optional<AssignedResource> getAssignedResource(Resource resource, TaskAssignment taskAssignment){
+        return assignedResourceRepository.findByHardwareIdAndTaskAssignmentId(resource.getId(), taskAssignment.getId());
     }
 
     public void sendResourceStatusMessage(Resource resource) {
