@@ -31,7 +31,6 @@ services:
 
 networks:
   greenspot2-net:
-    name: greenspot2_net
 
 volumes:
   mongo_assign:
