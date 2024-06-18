@@ -297,11 +297,12 @@ public class AllocationService {
     public void sendTaskStatusMessage(Task task) {
         TaskStatusMessageDTO taskStatusMessageDTO = new TaskStatusMessageDTO();
         taskStatusMessageDTO.setId(task.getIdTask());
+        taskStatusMessageDTO.setEnabled(task.getEnabled());
         taskStatusMessageDTO.setStartTime(task.getStartTime());
         taskStatusMessageDTO.setEndTime(task.getEndTime());
         taskStatusMessageDTO.setRunning(task.getRunning());
 
-        if (task.getRunning())
+        if (Boolean.TRUE.equals(task.getRunning()))
             tasksMessageHandler.handleTaskAssignment(taskStatusMessageDTO);
         else
             tasksMessageHandler.endTaskExecution(taskStatusMessageDTO);
@@ -312,12 +313,19 @@ public class AllocationService {
 
         List<String> hardwareIds = assignmentTask.getAssignedResources().stream()
                 .map(AssignedResource::getHardwareId)
-                .collect(Collectors.toList());
+                .toList();
 
         taskStatusMessageDTO.setId(assignmentTask.getIdTask());
+        taskStatusMessageDTO.setRunning(assignmentTask.getIsComplete());
+
+        if(Boolean.TRUE.equals(assignmentTask.getIsComplete())) {
+            taskStatusMessageDTO.setEndTime(assignmentTask.getCompletedTime());
+            taskStatusMessageDTO.setEnabled(false);
+        }
+
         taskStatusMessageDTO.setAssignedResources(hardwareIds);
 
-        if (assignmentTask.getIsComplete())
+        if (Boolean.TRUE.equals(assignmentTask.getIsComplete()))
             tasksMessageHandler.endTaskExecution(taskStatusMessageDTO);
         else
             tasksMessageHandler.handleTaskAssignment(taskStatusMessageDTO);

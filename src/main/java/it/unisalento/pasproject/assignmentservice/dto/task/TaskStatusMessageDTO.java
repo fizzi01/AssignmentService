@@ -13,6 +13,8 @@ public class TaskStatusMessageDTO {
 
     private Boolean running;
 
+    private Boolean enabled;
+
     private List<String> assignedResources;
 
     private LocalDateTime startTime;
