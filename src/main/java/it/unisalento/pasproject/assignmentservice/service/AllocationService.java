@@ -45,7 +45,7 @@ public class AllocationService {
     }
 
     public List<Task> getAvailableTasks() {
-        return taskRepository.findByRunningTrue();
+        return taskRepository.findByEnabledTrueAndRunningTrue();
     }
 
     public List<Resource> getAvailableResources() {

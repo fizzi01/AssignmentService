@@ -54,12 +54,6 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing.newtask.key}")
     private String newTaskTopic;
 
-    @Value("${rabbitmq.routing.taskassignment.key}")
-    private String taskAssingmentTopic;
-
-    @Value("${rabbitmq.queue.taskassignment.name}")
-    private String taskAssignmentQueue;
-
     @Value("${rabbitmq.queue.taskexecution.name}")
     private String taskExecutionQueue;
 
@@ -74,11 +68,6 @@ public class RabbitMQConfig {
     @Bean
     public Queue newTaskQueue() {
         return new Queue(newTaskQueue);
-    }
-
-    @Bean
-    public Queue taskAssignmentQueue() {
-        return new Queue(taskAssignmentQueue);
     }
 
     @Bean
@@ -97,14 +86,6 @@ public class RabbitMQConfig {
                 .bind(newTaskQueue())
                 .to(dataExchange())
                 .with(newTaskTopic);
-    }
-
-    @Bean
-    public Binding taskAssignmentBinding() {
-        return BindingBuilder
-                .bind(taskAssignmentQueue())
-                .to(dataExchange())
-                .with(taskAssingmentTopic);
     }
 
     @Bean
