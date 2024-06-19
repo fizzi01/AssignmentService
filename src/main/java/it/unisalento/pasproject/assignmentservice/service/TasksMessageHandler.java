@@ -41,7 +41,7 @@ public class TasksMessageHandler {
     private final MessageProducer messageProducer;
 
     @Autowired
-    public TasksMessageHandler(TaskRepository taskRepository, MessageProducer messageProducer, @Qualifier("RabbitMQProducer") MessageProducerStrategy strategy, AllocationService allocationService) {
+    public TasksMessageHandler(MessageProducer messageProducer, @Qualifier("RabbitMQProducer") MessageProducerStrategy strategy) {
         this.messageProducer = messageProducer;
         messageProducer.setStrategy(strategy);
     }
