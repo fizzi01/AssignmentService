@@ -39,71 +39,13 @@ public class TasksMessageHandler {
 
 
     private final MessageProducer messageProducer;
-    private final TaskRepository taskRepository;
-    private final AllocationService allocationService;
 
     @Autowired
     public TasksMessageHandler(TaskRepository taskRepository, MessageProducer messageProducer, @Qualifier("RabbitMQProducer") MessageProducerStrategy strategy, AllocationService allocationService) {
-        this.taskRepository = taskRepository;
         this.messageProducer = messageProducer;
-        this.allocationService = allocationService;
         messageProducer.setStrategy(strategy);
     }
 
-    /**
-     * This method is called when a new task is created or updated and sent through the Topic
-     * @param taskMessageDTO the task message
-     */
-    @RabbitListener(queues = "${rabbitmq.queue.newtask.name}")
-    public void handleNewTask(TaskMessageDTO taskMessageDTO) {
-
-        try {
-            Optional<Task> task = taskRepository.findByIdTask(taskMessageDTO.getId());
-
-            Task newTask = new Task();
-
-            // If the task is already present in the database, update it
-            if (task.isPresent()) {
-                newTask = task.get();
-            }
-
-            //Non viene controllato se manca qualche campo, perchè il TaskManager dovrebbe inviare sempre tutti i campi
-            //anche quando la task viene aggiornata. SOLO DATA CONSITENCY
-
-            newTask.setIdTask(taskMessageDTO.getId());
-            newTask.setEmailUtente(taskMessageDTO.getEmailUtente());
-            newTask.setMaxComputingPower(taskMessageDTO.getMaxComputingPower());
-            newTask.setMaxCudaPower(taskMessageDTO.getMaxCudaPower());
-            newTask.setMinCudaPower(taskMessageDTO.getMinCudaPower());
-            newTask.setMinComputingPower(taskMessageDTO.getMinComputingPower());
-            newTask.setTaskDuration(taskMessageDTO.getTaskDuration());
-            newTask.setMaxEnergyConsumption(taskMessageDTO.getMaxEnergyConsumption());
-            newTask.setMinEnergyConsumption(taskMessageDTO.getMinEnergyConsumption());
-            newTask.setMinWorkingTime(taskMessageDTO.getMinWorkingTime());
-            newTask.setRunning(taskMessageDTO.getRunning());
-            newTask.setEnabled(taskMessageDTO.getEnabled());
-
-            if (newTask.getEnabled() && newTask.getRunning()) {
-                if (newTask.getStartTime() == null) {
-                    newTask.setStartTime(LocalDateTime.now());
-                    newTask.setEndTime(newTask.getStartTime().plusSeconds(newTask.getTaskDuration().longValue()));
-                }
-            } else {
-                newTask.setStartTime(null);
-            }
-
-            // If the task is forced to stop, deallocate all the resources without Watcher
-            if (Boolean.FALSE.equals(newTask.getRunning())) {
-                LOGGER.warn("Task {} is forced to stop", newTask.getId());
-                newTask.setEndTime(LocalDateTime.now());
-                allocationService.deallocateAllResources(newTask);
-            }
-
-            taskRepository.save(newTask);
-        }catch (Exception e){
-            LOGGER.error("Error while saving task : {}", e.getMessage());
-        }
-    }
 
     /**
      * This method is called when a user is assigned to a task
