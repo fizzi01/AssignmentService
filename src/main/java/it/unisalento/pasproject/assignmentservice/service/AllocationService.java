@@ -44,6 +44,11 @@ public class AllocationService {
         this.analyticsMessageHandler = analyticsMessageHandler;
     }
 
+    public void deallocateAllResources(Task task) {
+        //Dealloca tutte le risorse assegnate alla task
+        deallocateResources(getActiveTaskAssignment(task.getId()));
+    }
+
     public List<Task> getAvailableTasks() {
         return taskRepository.findByEnabledTrueAndRunningTrue();
     }

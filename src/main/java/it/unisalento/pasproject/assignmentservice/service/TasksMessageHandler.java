@@ -96,18 +96,13 @@ public class TasksMessageHandler {
             if (Boolean.FALSE.equals(newTask.getRunning())) {
                 LOGGER.warn("Task {} is forced to stop", newTask.getId());
                 newTask.setEndTime(LocalDateTime.now());
-                deallocateAllResources(newTask);
+                allocationService.deallocateAllResources(newTask);
             }
 
             taskRepository.save(newTask);
         }catch (Exception e){
             LOGGER.error("Error while saving task : {}", e.getMessage());
         }
-    }
-
-    private void deallocateAllResources(Task task) {
-        //Dealloca tutte le risorse assegnate alla task
-        allocationService.deallocateResources(allocationService.getActiveTaskAssignment(task.getId()));
     }
 
     /**
