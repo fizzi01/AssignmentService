@@ -6,10 +6,13 @@ import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Service
 public class TaskUpdateMessageHandler {
 
 
@@ -18,6 +21,7 @@ public class TaskUpdateMessageHandler {
     private final AllocationService allocationService;
     private final TaskRepository taskRepository;
 
+    @Autowired
     public TaskUpdateMessageHandler(AllocationService allocationService, TaskRepository taskRepository) {
         this.allocationService = allocationService;
         this.taskRepository = taskRepository;
@@ -31,6 +35,7 @@ public class TaskUpdateMessageHandler {
     public void handleNewTask(TaskMessageDTO taskMessageDTO) {
 
         try {
+
             Optional<Task> task = taskRepository.findByIdTask(taskMessageDTO.getId());
 
             Task newTask = new Task();
@@ -56,14 +61,12 @@ public class TaskUpdateMessageHandler {
             newTask.setRunning(taskMessageDTO.getRunning());
             newTask.setEnabled(taskMessageDTO.getEnabled());
 
-            if (newTask.getEnabled() && newTask.getRunning()) {
-                if (newTask.getStartTime() == null) {
+            if (newTask.getEnabled() && newTask.getRunning() && newTask.getStartTime() == null) {
                     newTask.setStartTime(LocalDateTime.now());
-                    newTask.setEndTime(newTask.getStartTime().plusSeconds(newTask.getTaskDuration().longValue()));
                 }
-            } else {
-                newTask.setStartTime(null);
-            }
+
+
+            taskRepository.save(newTask);
 
             // If the task is forced to stop, deallocate all the resources without Watcher
             if (Boolean.FALSE.equals(newTask.getRunning())) {
@@ -72,7 +75,6 @@ public class TaskUpdateMessageHandler {
                 allocationService.deallocateAllResources(newTask);
             }
 
-            taskRepository.save(newTask);
         }catch (Exception e){
             LOGGER.error("Error while saving task : {}", e.getMessage());
         }
