@@ -11,6 +11,8 @@ import it.unisalento.pasproject.assignmentservice.dto.analytics.AssignedAnalytic
 import it.unisalento.pasproject.assignmentservice.dto.analytics.AssignedResourceAnalyticsDTO;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskAssignmentRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,9 @@ public class AnalyticsMessageHandler {
     private final MessageProducer messageProducer;
     private final TaskAssignmentRepository taskAssignmentRepository;
     private final TaskService taskService;
+
+    //logger
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsMessageHandler.class);
 
 
     @Autowired
@@ -100,6 +105,7 @@ public class AnalyticsMessageHandler {
             return;
         }
         Task retTask = task.get();
+        LOGGER.debug("Changing task id from {} to {}", taskAssignment.getIdTask(), retTask.getIdTask());
         taskAssignment.setIdTask(retTask.getIdTask()); // Sync task id with real task id
 
         AssignedAnalyticsDTO assignedAnalyticsDTO = getAssignedAnalyticsDTO(taskAssignment, retTask);
@@ -107,6 +113,8 @@ public class AnalyticsMessageHandler {
 
         AnalyticsMessageDTO analyticsMessageDTO = new AnalyticsMessageDTO();
         analyticsMessageDTO.setAssignment(assignedAnalyticsDTO);
+
+        LOGGER.debug("Sending analytics message for task {}", assignedAnalyticsDTO.getTaskId());
 
         messageProducer.sendMessage(analyticsMessageDTO, sendUpdatedAssignmentDataRoutingKey, analyticsExchange);
     }
