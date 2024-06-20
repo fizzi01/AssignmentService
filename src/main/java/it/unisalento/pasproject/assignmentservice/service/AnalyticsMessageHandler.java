@@ -61,6 +61,7 @@ public class AnalyticsMessageHandler {
             return;
         }
         Task retTask = task.get();
+        taskAssignmentEntity.setIdTask(retTask.getIdTask()); // Sync task id with real task id
 
         AssignedAnalyticsDTO assignedAnalyticsDTO = getAssignedAnalyticsDTO(taskAssignmentEntity,retTask);
         AssignedResourceAnalyticsDTO assignedResourceAnalyticsDTO = getAssignedResAnalyticsDTO(taskAssignmentEntity, assignedResource, resource);
@@ -83,6 +84,7 @@ public class AnalyticsMessageHandler {
             return;
         }
         Task retTask = task.get();
+        taskAssignment.setIdTask(retTask.getIdTask()); // Sync task id with real task id
 
         analyticsMessageDTO.setAssignment(getAssignedAnalyticsDTO(taskAssignment,retTask));
 
@@ -98,6 +100,7 @@ public class AnalyticsMessageHandler {
             return;
         }
         Task retTask = task.get();
+        taskAssignment.setIdTask(retTask.getIdTask()); // Sync task id with real task id
 
         AssignedAnalyticsDTO assignedAnalyticsDTO = getAssignedAnalyticsDTO(taskAssignment, retTask);
         assignedAnalyticsDTO.setAssignedTime(now);
@@ -111,7 +114,7 @@ public class AnalyticsMessageHandler {
     public static AssignedAnalyticsDTO getAssignedAnalyticsDTO(TaskAssignment taskAssignmentEntity, Task task){
         LocalDateTime now = LocalDateTime.now();
         AssignedAnalyticsDTO assignedAnalyticsDTO = new AssignedAnalyticsDTO();
-        assignedAnalyticsDTO.setTaskId(taskAssignmentEntity.getIdTask());
+        assignedAnalyticsDTO.setTaskId(task.getIdTask());
         assignedAnalyticsDTO.setCompletedTime(taskAssignmentEntity.getCompletedTime());
         assignedAnalyticsDTO.setLastUpdate(now);
         assignedAnalyticsDTO.setComplete(taskAssignmentEntity.getIsComplete());
