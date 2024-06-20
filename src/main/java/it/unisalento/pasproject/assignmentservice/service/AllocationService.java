@@ -97,6 +97,9 @@ public class AllocationService {
 
     public void deallocateResources(TaskAssignment taskAssignment) {
 
+        if(taskAssignment == null)
+            return;
+
         //Prendo le risorse allocate per il task e le dealloco
         for (AssignedResource assigned : taskAssignment.getAssignedResources()) {
 
