@@ -20,7 +20,7 @@ public class TaskService {
     }
 
     public Optional<Task> getTask(String idTask) {
-        return taskRepository.findById(idTask);
+        return taskRepository.findByIdTask(idTask);
     }
 
     public TaskDTO getTaskDTO(Task task) {

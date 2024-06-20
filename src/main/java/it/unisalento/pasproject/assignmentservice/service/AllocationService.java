@@ -46,7 +46,7 @@ public class AllocationService {
 
     public void deallocateAllResources(Task task) {
         //Dealloca tutte le risorse assegnate alla task
-        deallocateResources(getActiveTaskAssignment(task.getId()));
+        deallocateResources(getActiveTaskAssignment(task.getIdTask()));
     }
 
     public List<Task> getAvailableTasks() {
@@ -188,7 +188,7 @@ public class AllocationService {
     }
 
     public void completeTaskAssignment(Task task){
-        TaskAssignment taskAssignment = taskAssignmentRepository.findByIdTask(task.getId());
+        TaskAssignment taskAssignment = taskAssignmentRepository.findByIdTask(task.getIdTask());
         taskAssignment.setIsComplete(true);
         taskAssignment.setCompletedTime(LocalDateTime.now());
         taskAssignmentRepository.save(taskAssignment);
@@ -204,15 +204,17 @@ public class AllocationService {
     }
 
     public TaskAssignment getTaskAssignment(Task task) {
-        TaskAssignment assignment =  taskAssignmentRepository.findByIdTask(task.getId());
+        LOGGER.info("Getting task assignment for task {} " + task.getIdTask());
+        TaskAssignment assignment =  taskAssignmentRepository.findByIdTask(task.getIdTask());
 
         if ( assignment == null ) {
+            LOGGER.info("Task assignment not found, creating new one");
             task.setStartTime(LocalDateTime.now());
             task.setRunning(true);
             updateTask(task);
 
             assignment = new TaskAssignment();
-            assignment.setIdTask(task.getId());
+            assignment.setIdTask(task.getIdTask());
             assignment.setIsComplete(false);
             assignment.setAssignedResources(List.of());
 
@@ -324,7 +326,7 @@ public class AllocationService {
                 .toList();
 
         taskStatusMessageDTO.setId(assignmentTask.getIdTask());
-        taskStatusMessageDTO.setRunning(assignmentTask.getIsComplete());
+        taskStatusMessageDTO.setRunning(!assignmentTask.getIsComplete());
 
         if(Boolean.TRUE.equals(assignmentTask.getIsComplete())) {
             taskStatusMessageDTO.setEndTime(assignmentTask.getCompletedTime());
