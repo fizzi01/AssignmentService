@@ -75,6 +75,7 @@ public class PayloadController {
                     for (AssignedResource res : assignedResources) {
                         if (res.getId().equals(assignedResourceToUpdate.getId())) {
                             res.setAssignedTime(LocalDateTime.now());
+                            assignedResourceToUpdate.setAssignedTime(LocalDateTime.now());
                         }
                     }
 
@@ -95,6 +96,7 @@ public class PayloadController {
                     for (AssignedResource res : assignedResources) {
                         if (res.getId().equals(assignedResourceToUpdate.getId())) {
                             res.setCompletedTime(LocalDateTime.now());
+                            assignedResourceToUpdate.setCompletedTime(LocalDateTime.now());
                         }
                     }
 

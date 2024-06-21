@@ -33,7 +33,7 @@ public class AllocationManager {
     /**
      * This method is called every minute and assigns the tasks to the resources
      */
-    @Scheduled(fixedRate = 60000) // esegue ogni minuto
+    @Scheduled(fixedRate = 30000) // esegue ogni minuto
     public void runAllocator() {
 
         //Prende tutte le Task che sono in running e che sono enabled

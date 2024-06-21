@@ -1,8 +1,11 @@
 package it.unisalento.pasproject.assignmentservice.controllers;
 
+import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Task;
+import it.unisalento.pasproject.assignmentservice.dto.resource.AssignedResourceListDTO;
 import it.unisalento.pasproject.assignmentservice.dto.task.TaskDTO;
 import it.unisalento.pasproject.assignmentservice.dto.task.TaskListDTO;
+import it.unisalento.pasproject.assignmentservice.repositories.AssignedResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskRepository;
 import it.unisalento.pasproject.assignmentservice.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,9 @@ public class TestController {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private AssignedResourceRepository assignedResourceRepository;
 
     @Autowired
     private TaskService taskService;
@@ -38,5 +44,10 @@ public class TestController {
         }
 
         return taskList;
+    }
+
+    @GetMapping(value="/find/all/ass")
+    public List<AssignedResource> getAssignedResources(){
+        return assignedResourceRepository.findAll();
     }
 }

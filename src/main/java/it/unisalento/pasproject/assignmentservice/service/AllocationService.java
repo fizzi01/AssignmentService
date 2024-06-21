@@ -132,14 +132,16 @@ public class AllocationService {
 
     public void deallocateResource(AssignedResource assignedResource) {
         LocalDateTime now = LocalDateTime.now();
-
+        LOGGER.info("Deallocating resource " + assignedResource.getHardwareId());
         Optional<Resource> retResource = resourceRepository.findById(assignedResource.getHardwareId());
         if (retResource.isEmpty())
             return;
 
         Resource resource = retResource.get();
-
         Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assignedResource.getTaskAssignmentId());
+
+        if(assignedResource.getAssignedTime() == null)
+            assignedResource.setAssignedTime(now);
 
         // Aggiorno AssignedResource per completare il deallocamento della risorsa
         if(assignedResource.getCompletedTime() == null || assignedResource.getCompletedTime().isAfter(now))
@@ -163,6 +165,7 @@ public class AllocationService {
 
             for (int i = 0; i < assignedResources.size(); i++) {
                 AssignedResource res = assignedResources.get(i);
+
                 if (res.getId().equals(assignedResource.getId())) {
                     res.setCompletedTime(assignedResource.getCompletedTime());
                     res.setHasCompleted(true);
@@ -173,6 +176,7 @@ public class AllocationService {
 
             taskAssignmentNew.setAssignedResources(assignedResources);
 
+            LOGGER.info("Starting checkout for resource " + assignedResource.getHardwareId());
             //Send Checkout Message
             checkoutResource(taskAssignmentNew.getIdTask(), resource.getMemberEmail(), assignedResource);
 
@@ -209,6 +213,7 @@ public class AllocationService {
             return;
 
         Task taskNew = task.get();
+
         checkoutMessageHandler.startCheckout(taskNew.getEmailUtente(), memberEmail, credits);
 
     }
@@ -242,7 +247,7 @@ public class AllocationService {
     }
 
     public TaskAssignment getTaskAssignment(Task task) {
-        LOGGER.info("Getting task assignment for task {} " + task.getIdTask());
+
         TaskAssignment assignment =  taskAssignmentRepository.findByIdTask(task.getIdTask());
 
         if ( assignment == null ) {

@@ -10,7 +10,7 @@ import java.time.ZoneOffset;
 public class CheckOutUtils {
 
     @Value("${credit.value.constant}")
-    private static double creditConstant;
+    private double creditConstant;
 
     public double getCreditAmount(LocalDateTime start,
                                          LocalDateTime end,
@@ -19,7 +19,9 @@ public class CheckOutUtils {
 
         ZoneOffset zoneOffset = ZoneOffset.UTC;
 
+        double rawCreditAmount = ((end.toEpochSecond(zoneOffset) - start.toEpochSecond(zoneOffset)) * computationalPower) / (energyConsumptionPerHour * creditConstant);
+        return Math.round(rawCreditAmount * 10.0) / 10.0;
+
         // Formula: [(end in seconds - start in seconds) * computationalPower] / [energyConsumptionPerHour * creditConstant]
-        return ((end.toEpochSecond(zoneOffset) - start.toEpochSecond(zoneOffset)) * computationalPower) / (energyConsumptionPerHour * creditConstant);
     }
 }

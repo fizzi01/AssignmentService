@@ -22,7 +22,7 @@ public class AssignmentWatcher {
         this.allocationService = allocationService;
     }
 
-    //Il metodo è annotato con @Scheduled(fixedRate = 60000) che fa si che il metodo venga eseguito ogni minuto
+    //Il metodo è annotato con @Scheduled(fixedRate = 30000) che fa si che il metodo venga eseguito ogni 30s
 
     //Il metodo watch() prende tutte le task che sono in running e che sono enabled
 
@@ -132,7 +132,7 @@ public class AssignmentWatcher {
     private void deallocateAllResources(Task task) {
         //Prende il task assignment che ha come taskId il task.id e che non è completed
         //Dealloca le risorse
-        allocationService.deallocateResources(allocationService.getActiveTaskAssignment(task.getId()));
+        allocationService.deallocateResources(allocationService.getActiveTaskAssignment(task.getIdTask()));
 
     }
 
