@@ -13,7 +13,7 @@ services:
     networks:
       - greenspot2-net
     volumes:
-      - ./build/libs/AssignmentService-v2.1.4.jar:/app/app.jar
+      - ./build/libs/AssignmentService-v2.1.5.jar:/app/app.jar
     working_dir: /app
     entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
 
