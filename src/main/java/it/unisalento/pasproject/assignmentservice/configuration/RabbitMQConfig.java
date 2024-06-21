@@ -168,6 +168,18 @@ public class RabbitMQConfig {
 
     // ------  END RESOURCE MESSAGES  ------ //
 
+    // ------ RESOURCE CHECKOUT MESSAGES ------ //
+
+    @Value("${rabbitmq.exchange.transaction.name}")
+    private String transactionExchange;
+
+    @Bean
+    public TopicExchange transactionExchange() {
+        return new TopicExchange(transactionExchange);
+    }
+
+
+
     /**
      * Creates a message converter for JSON messages.
      *

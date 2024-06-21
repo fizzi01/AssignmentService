@@ -1,5 +1,6 @@
 package it.unisalento.pasproject.assignmentservice.service;
 
+import it.unisalento.pasproject.assignmentservice.business.CheckOutUtils;
 import it.unisalento.pasproject.assignmentservice.domain.*;
 import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.task.TaskStatusMessageDTO;
@@ -28,13 +29,20 @@ public class AllocationService {
     private final TasksMessageHandler tasksMessageHandler;
     private final ResourceMessageHandler resourcesMessageHandler;
     private final AnalyticsMessageHandler analyticsMessageHandler;
+    private final CheckoutMessageHandler checkoutMessageHandler;
+
+    private final CheckOutUtils checkOutUtils;
 
     private static final Logger LOGGER = Logger.getLogger(AllocationService.class.getName());
 
     @Autowired
     public AllocationService(TaskRepository taskRepository, TaskAssignmentRepository taskAssignmentRepository,
                              ResourceRepository resourceRepository, AssignedResourceRepository assignedMemberRepository,
-                             TasksMessageHandler tasksMessageHandler, ResourceMessageHandler resourcesMessageHandler, AnalyticsMessageHandler analyticsMessageHandler) {
+                             TasksMessageHandler tasksMessageHandler, ResourceMessageHandler resourcesMessageHandler,
+                             AnalyticsMessageHandler analyticsMessageHandler,
+                             CheckoutMessageHandler checkoutMessageHandler,
+                             CheckOutUtils checkOutUtils
+                                ) {
         this.taskRepository = taskRepository;
         this.taskAssignmentRepository = taskAssignmentRepository;
         this.resourceRepository = resourceRepository;
@@ -42,6 +50,8 @@ public class AllocationService {
         this.tasksMessageHandler = tasksMessageHandler;
         this.resourcesMessageHandler = resourcesMessageHandler;
         this.analyticsMessageHandler = analyticsMessageHandler;
+        this.checkoutMessageHandler = checkoutMessageHandler;
+        this.checkOutUtils = checkOutUtils;
     }
 
     public void deallocateAllResources(Task task) {
@@ -163,6 +173,9 @@ public class AllocationService {
 
             taskAssignmentNew.setAssignedResources(assignedResources);
 
+            //Send Checkout Message
+            checkoutResource(taskAssignmentNew.getIdTask(), resource.getMemberEmail(), assignedResource);
+
             taskAssignmentRepository.save(taskAssignmentNew);
         }
 
@@ -172,6 +185,31 @@ public class AllocationService {
 
         //Send message of resource deallocation
         updateAssignmentData(assignedResource, resource);
+
+    }
+
+    private void checkoutResource(String idTask, String memberEmail, AssignedResource assignedResource) {
+        Optional<Task> task = taskRepository.findByIdTask(idTask);
+
+        if(task.isEmpty())
+            return;
+
+        LocalDateTime start = assignedResource.getAssignedTime();
+        LocalDateTime end = assignedResource.getCompletedTime();
+        double energyPerHour = assignedResource.getAssignedEnergyConsumptionPerHour();
+        double computationalPower = assignedResource.getAssignedMultiScore()
+                + assignedResource.getAssignedSingleScore()
+                + assignedResource.getAssignedOpenclScore()
+                + assignedResource.getAssignedVulkanScore()
+                + assignedResource.getAssignedCudaScore();
+
+        double credits = checkOutUtils.getCreditAmount(start,end,energyPerHour,computationalPower);
+
+        if(credits <= 0) // Resource not used
+            return;
+
+        Task taskNew = task.get();
+        checkoutMessageHandler.startCheckout(taskNew.getEmailUtente(), memberEmail, credits);
 
     }
 
