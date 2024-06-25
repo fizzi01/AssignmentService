@@ -170,13 +170,13 @@ public class RabbitMQConfig {
 
     // ------ RESOURCE CHECKOUT MESSAGES ------ //
 
-    @Value("${rabbitmq.exchange.transaction.name}")
+    /*@Value("${rabbitmq.exchange.transaction.name}")
     private String transactionExchange;
 
     @Bean
     public TopicExchange transactionExchange() {
         return new TopicExchange(transactionExchange);
-    }
+    }*/
 
 
 

@@ -2,8 +2,10 @@ package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.CheckOutUtils;
 import it.unisalento.pasproject.assignmentservice.domain.*;
+import it.unisalento.pasproject.assignmentservice.dto.NotificationMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.task.TaskStatusMessageDTO;
+import it.unisalento.pasproject.assignmentservice.exceptions.AssignedResourceNotFoundException;
 import it.unisalento.pasproject.assignmentservice.repositories.AssignedResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.assignmentservice.repositories.TaskAssignmentRepository;
@@ -18,6 +20,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static it.unisalento.pasproject.assignmentservice.service.NotificationConstants.INFO_NOTIFICATION_TYPE;
+import static it.unisalento.pasproject.assignmentservice.service.NotificationConstants.SUCCESS_NOTIFICATION_TYPE;
+
 @Service
 public class AllocationService {
 
@@ -29,6 +34,7 @@ public class AllocationService {
     private final TasksMessageHandler tasksMessageHandler;
     private final ResourceMessageHandler resourcesMessageHandler;
     private final AnalyticsMessageHandler analyticsMessageHandler;
+    private final NotificationMessageHandler notificationMessageHandler;
     private final CheckoutMessageHandler checkoutMessageHandler;
 
     private final CheckOutUtils checkOutUtils;
@@ -40,6 +46,7 @@ public class AllocationService {
                              ResourceRepository resourceRepository, AssignedResourceRepository assignedMemberRepository,
                              TasksMessageHandler tasksMessageHandler, ResourceMessageHandler resourcesMessageHandler,
                              AnalyticsMessageHandler analyticsMessageHandler,
+                             NotificationMessageHandler notificationMessageHandler,
                              CheckoutMessageHandler checkoutMessageHandler,
                              CheckOutUtils checkOutUtils
                                 ) {
@@ -50,6 +57,7 @@ public class AllocationService {
         this.tasksMessageHandler = tasksMessageHandler;
         this.resourcesMessageHandler = resourcesMessageHandler;
         this.analyticsMessageHandler = analyticsMessageHandler;
+        this.notificationMessageHandler = notificationMessageHandler;
         this.checkoutMessageHandler = checkoutMessageHandler;
         this.checkOutUtils = checkOutUtils;
     }
@@ -334,6 +342,7 @@ public class AllocationService {
         return assignedResourceRepository.findByHardwareIdAndTaskAssignmentId(resource.getId(), taskAssignment.getId());
     }
 
+    //TODO: VEDERE SE VA BENE
     public void sendResourceStatusMessage(Resource resource) {
         // Creazione di un oggetto ResourceMessageDTO
         ResourceStatusMessageDTO resourceStatusMessageDTO = new ResourceStatusMessageDTO();
@@ -341,12 +350,38 @@ public class AllocationService {
         resourceStatusMessageDTO.setIsAvailable(resource.getIsAvailable());
         resourceStatusMessageDTO.setCurrentTaskId(resource.getCurrentTaskId());
 
-        if (resource.getCurrentTaskId() != null)
+        if (resource.getCurrentTaskId() != null) {
+            Optional<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareId(resource.getId());
+
+            if (assignedResource.isEmpty())
+                throw new AssignedResourceNotFoundException("Assigned resource with hardware id " + resource.getIdResource() + "not found");
+
+            String assignedResourceId = assignedResource.get().getId();
+
             resourcesMessageHandler.handleResourceAssignment(resourceStatusMessageDTO);
-        else
+            sendNotificationRequest(
+                    resource.getMemberEmail(),
+                    "Resource assignment",
+                    "Resource " + assignedResourceId + " has been assigned and is now in use",
+                    SUCCESS_NOTIFICATION_TYPE,
+                    false,
+                    true
+            );
+        }
+        else {
             resourcesMessageHandler.handleResourceDeallocation(resourceStatusMessageDTO);
+            sendNotificationRequest(
+                    resource.getMemberEmail(),
+                    "Resource deallocation",
+                    "Resource " + resource.getId() + " has been deallocated and is now available",
+                    SUCCESS_NOTIFICATION_TYPE,
+                    false,
+                    true
+            );
+        }
     }
 
+    //TODO: VEDERE SE VA BENE
     public void sendTaskStatusMessage(Task task) {
         TaskStatusMessageDTO taskStatusMessageDTO = new TaskStatusMessageDTO();
         taskStatusMessageDTO.setId(task.getIdTask());
@@ -355,12 +390,32 @@ public class AllocationService {
         taskStatusMessageDTO.setEndTime(task.getEndTime());
         taskStatusMessageDTO.setRunning(task.getRunning());
 
-        if (Boolean.TRUE.equals(task.getRunning()))
+        if (Boolean.TRUE.equals(task.getRunning())) {
+
             tasksMessageHandler.handleTaskAssignment(taskStatusMessageDTO);
-        else
+            sendNotificationRequest(
+                    task.getEmailUtente(),
+                    "Task assignment",
+                    "Task " + task.getIdTask() + " has been submitted and prepared for execution",
+                    INFO_NOTIFICATION_TYPE,
+                    false,
+                    true
+            );
+        }
+        else {
             tasksMessageHandler.endTaskExecution(taskStatusMessageDTO);
+            sendNotificationRequest(
+                    task.getEmailUtente(),
+                    "Task definitely completed",
+                    "All operations for task " + task.getIdTask() + " has been completed",
+                    SUCCESS_NOTIFICATION_TYPE,
+                    false,
+                    true
+            );
+        }
     }
 
+    //TODO: VEDERE SE VA BENE
     public void sendTaskStatusMessage(TaskAssignment assignmentTask) {
         TaskStatusMessageDTO taskStatusMessageDTO = new TaskStatusMessageDTO();
 
@@ -370,18 +425,40 @@ public class AllocationService {
 
         taskStatusMessageDTO.setId(assignmentTask.getIdTask());
         taskStatusMessageDTO.setRunning(!assignmentTask.getIsComplete());
-
-        if(Boolean.TRUE.equals(assignmentTask.getIsComplete())) {
-            taskStatusMessageDTO.setEndTime(assignmentTask.getCompletedTime());
-            taskStatusMessageDTO.setEnabled(false);
-        }
-
         taskStatusMessageDTO.setAssignedResources(hardwareIds);
 
-        if (Boolean.TRUE.equals(assignmentTask.getIsComplete()))
+        if (Boolean.TRUE.equals(assignmentTask.getIsComplete())) {
+            taskStatusMessageDTO.setEndTime(assignmentTask.getCompletedTime());
+            taskStatusMessageDTO.setEnabled(false);
+
+            Optional<Task> task = taskRepository.findByIdTask(assignmentTask.getIdTask());
+
+            if(task.isEmpty())
+                throw new AssignedResourceNotFoundException("Task with id " + assignmentTask.getIdTask() + " not found");
+
+            String email = task.get().getEmailUtente();
+
             tasksMessageHandler.endTaskExecution(taskStatusMessageDTO);
-        else
+            sendNotificationRequest(
+                    email,
+                    "Task completed",
+                    "Task " + assignmentTask.getIdTask() + " has been completed",
+                    SUCCESS_NOTIFICATION_TYPE,
+                    false,
+                    true
+            );
+        }
+        else {
             tasksMessageHandler.handleTaskAssignment(taskStatusMessageDTO);
+            sendNotificationRequest(
+                    assignmentTask.getIdTask(),
+                    "Task update",
+                    "Task " + assignmentTask.getIdTask() + " is now running and has been updated",
+                    INFO_NOTIFICATION_TYPE,
+                    false,
+                    true
+            );
+        }
     }
 
     public List<Resource> getAssignedResources() {
@@ -407,5 +484,17 @@ public class AllocationService {
 
     public void sendAssignmentData(TaskAssignment taskAssignment){
         analyticsMessageHandler.sendAssignmentData(taskAssignment);
+    }
+
+    public void sendNotificationRequest(String receiver, String subject, String message, String type, boolean isEmail, boolean isNotification) {
+        notificationMessageHandler.sendNotificationMessage(NotificationMessageHandler
+                .buildNotificationMessage(
+                        receiver,
+                        message,
+                        subject,
+                        type,
+                        isEmail,
+                        isNotification
+                ));
     }
 }

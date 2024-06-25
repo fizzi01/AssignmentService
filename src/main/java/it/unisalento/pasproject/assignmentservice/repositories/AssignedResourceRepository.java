@@ -16,4 +16,6 @@ public interface AssignedResourceRepository extends MongoRepository<AssignedReso
     List<AssignedResource> findByHardwareIdAndHasCompletedFalse(String id);
 
     Optional<AssignedResource> findByHardwareIdAndTaskAssignmentId(String resourceId, String taskAssignmentId);
+
+    Optional<AssignedResource> findByHardwareId(String resourceId);
 }
