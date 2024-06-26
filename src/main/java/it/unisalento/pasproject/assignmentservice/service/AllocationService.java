@@ -283,7 +283,6 @@ public class AllocationService {
     }
 
     public TaskAssignment updateTaskAssignment(TaskAssignment taskAssignment) {
-        //TODO: Vedere se funziona l'aggiornamento delle liste di hardware assegnati
         sendTaskStatusMessage(taskAssignment);
         return taskAssignmentRepository.save(taskAssignment);
     }
@@ -295,7 +294,6 @@ public class AllocationService {
     }
 
     public AssignedResource assignResource(Resource resource, TaskAssignment taskAssignment) {
-        //TODO: Vedere se serve qui un invio di update, sembra di no
         DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
         LocalTime currentTime = LocalTime.now();
 
@@ -363,6 +361,7 @@ public class AllocationService {
                     resource.getMemberEmail(),
                     "Resource assignment",
                     "Resource " + assignedResourceId + " has been assigned and is now in use",
+                    "",
                     SUCCESS_NOTIFICATION_TYPE,
                     false,
                     true
@@ -374,6 +373,7 @@ public class AllocationService {
                     resource.getMemberEmail(),
                     "Resource deallocation",
                     "Resource " + resource.getId() + " has been deallocated and is now available",
+                    "",
                     SUCCESS_NOTIFICATION_TYPE,
                     false,
                     true
@@ -381,7 +381,6 @@ public class AllocationService {
         }
     }
 
-    //TODO: VEDERE SE VA BENE
     public void sendTaskStatusMessage(Task task) {
         TaskStatusMessageDTO taskStatusMessageDTO = new TaskStatusMessageDTO();
         taskStatusMessageDTO.setId(task.getIdTask());
@@ -397,6 +396,7 @@ public class AllocationService {
                     task.getEmailUtente(),
                     "Task assignment",
                     "Task " + task.getIdTask() + " has been submitted and prepared for execution",
+                    "",
                     INFO_NOTIFICATION_TYPE,
                     false,
                     true
@@ -408,6 +408,7 @@ public class AllocationService {
                     task.getEmailUtente(),
                     "Task definitely completed",
                     "All operations for task " + task.getIdTask() + " has been completed",
+                    "",
                     SUCCESS_NOTIFICATION_TYPE,
                     false,
                     true
@@ -415,7 +416,6 @@ public class AllocationService {
         }
     }
 
-    //TODO: VEDERE SE VA BENE
     public void sendTaskStatusMessage(TaskAssignment assignmentTask) {
         TaskStatusMessageDTO taskStatusMessageDTO = new TaskStatusMessageDTO();
 
@@ -443,6 +443,7 @@ public class AllocationService {
                     email,
                     "Task completed",
                     "Task " + assignmentTask.getIdTask() + " has been completed",
+                    "",
                     SUCCESS_NOTIFICATION_TYPE,
                     false,
                     true
@@ -454,6 +455,7 @@ public class AllocationService {
                     assignmentTask.getIdTask(),
                     "Task update",
                     "Task " + assignmentTask.getIdTask() + " is now running and has been updated",
+                    "",
                     INFO_NOTIFICATION_TYPE,
                     false,
                     true
@@ -486,12 +488,13 @@ public class AllocationService {
         analyticsMessageHandler.sendAssignmentData(taskAssignment);
     }
 
-    public void sendNotificationRequest(String receiver, String subject, String message, String type, boolean isEmail, boolean isNotification) {
+    public void sendNotificationRequest(String receiver, String subject, String message, String attachment, String type, boolean isEmail, boolean isNotification) {
         notificationMessageHandler.sendNotificationMessage(NotificationMessageHandler
                 .buildNotificationMessage(
                         receiver,
                         message,
                         subject,
+                        attachment,
                         type,
                         isEmail,
                         isNotification

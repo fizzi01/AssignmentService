@@ -21,11 +21,12 @@ public class NotificationMessageHandler {
         this.messageProducer = messageProducer;
     }
 
-    public static NotificationMessageDTO buildNotificationMessage(String receiver, String message, String subject, String type, boolean email, boolean notification) {
+    public static NotificationMessageDTO buildNotificationMessage(String receiver, String message, String subject, String attachment, String type, boolean email, boolean notification) {
         return NotificationMessageDTO.builder()
-                .message(message)
                 .receiver(receiver)
+                .message(message)
                 .subject(subject)
+                .attachment(attachment)
                 .type(type)
                 .email(email)
                 .notification(notification)

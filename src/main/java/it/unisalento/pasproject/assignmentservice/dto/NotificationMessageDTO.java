@@ -11,6 +11,7 @@ public class NotificationMessageDTO {
     private String receiver;
     private String message;
     private String subject;
+    private String attachment;
 
     //type: ricevuta, notifica generica,
     // notifica di errore, notifica di avviso,
