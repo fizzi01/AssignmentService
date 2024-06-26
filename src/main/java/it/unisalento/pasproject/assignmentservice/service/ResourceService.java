@@ -28,6 +28,23 @@ public class ResourceService {
         return resource;
     }
 
+    public Resource updateResource(Resource resource, ResourceMessageDTO resourceMessageDTO) {
+        Optional.ofNullable(resourceMessageDTO.getId()).ifPresent(resource::setIdResource);
+        Optional.ofNullable(resourceMessageDTO.getName()).ifPresent(resource::setName);
+        Optional.ofNullable(resourceMessageDTO.getAvailability()).ifPresent(resource::setAvailability);
+        Optional.of(resourceMessageDTO.getKWh()).ifPresent(resource::setKWh);
+        Optional.ofNullable(resourceMessageDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
+        Optional.ofNullable(resourceMessageDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        Optional.ofNullable(resourceMessageDTO.getCurrentTaskId()).ifPresent(resource::setCurrentTaskId);
+        Optional.of(resourceMessageDTO.getSingleCoreScore()).ifPresent(resource::setSingleCoreScore);
+        Optional.of(resourceMessageDTO.getMulticoreScore()).ifPresent(resource::setMulticoreScore);
+        Optional.of(resourceMessageDTO.getOpenclScore()).ifPresent(resource::setOpenclScore);
+        Optional.of(resourceMessageDTO.getVulkanScore()).ifPresent(resource::setVulkanScore);
+        Optional.of(resourceMessageDTO.getCudaScore()).ifPresent(resource::setCudaScore);
+
+        return resource;
+    }
+
     public ResourceDTO getResourceDTO(Resource resource) {
         ResourceDTO resourceDTO = new ResourceDTO();
         Optional.ofNullable(resource.getIdResource()).ifPresent(resourceDTO::setId);

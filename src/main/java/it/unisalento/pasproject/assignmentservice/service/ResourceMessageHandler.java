@@ -43,14 +43,14 @@ public class ResourceMessageHandler {
     @RabbitListener(queues = "${rabbitmq.queue.newresource.name}")
     public void handleNewResource(ResourceMessageDTO resourceMessageDTO) {
         Optional<Resource> resource = Optional.ofNullable(resourceRepository.findByIdResource(resourceMessageDTO.getId()));
-        Resource newResource = new Resource();
+        Resource newResource;
 
         if(resource.isPresent()) {
             newResource = resource.get();
+            newResource = resourceService.updateResource(newResource, resourceMessageDTO);
+        } else {
+            newResource = resourceService.getResource(resourceMessageDTO);
         }
-
-        newResource = resourceService.getResource(resourceMessageDTO);
-
         resourceRepository.save(newResource);
     }
 
