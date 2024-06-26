@@ -351,7 +351,7 @@ public class AllocationService {
         resourceStatusMessageDTO.setCurrentTaskId(resource.getCurrentTaskId());
 
         if (resource.getCurrentTaskId() != null) {
-            Optional<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareId(resource.getId());
+            Optional<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareId(resource.getIdResource());
 
             if (assignedResource.isEmpty())
                 throw new AssignedResourceNotFoundException("Assigned resource with hardware id " + resource.getIdResource() + "not found");
