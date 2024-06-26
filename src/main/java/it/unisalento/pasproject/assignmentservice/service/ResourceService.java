@@ -13,7 +13,7 @@ public class ResourceService {
     public Resource getResource(ResourceMessageDTO resourceMessageDTO) {
         Resource resource = new Resource();
 
-        Optional.ofNullable(resourceMessageDTO.getId()).ifPresent(resource::setId);
+        Optional.ofNullable(resourceMessageDTO.getId()).ifPresent(resource::setIdResource);
         Optional.ofNullable(resourceMessageDTO.getName()).ifPresent(resource::setName);
         Optional.ofNullable(resourceMessageDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceMessageDTO.getKWh()).ifPresent(resource::setKWh);
@@ -30,7 +30,7 @@ public class ResourceService {
 
     public ResourceDTO getResourceDTO(Resource resource) {
         ResourceDTO resourceDTO = new ResourceDTO();
-        Optional.ofNullable(resource.getId()).ifPresent(resourceDTO::setId);
+        Optional.ofNullable(resource.getIdResource()).ifPresent(resourceDTO::setId);
         Optional.ofNullable(resource.getName()).ifPresent(resourceDTO::setName);
         Optional.ofNullable(resource.getAvailability()).ifPresent(resourceDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceDTO::setKWh);
