@@ -29,7 +29,7 @@ public class AssignedTaskController {
     }
 
     @GetMapping(value = "/find/all")
-    @Secured(ROLE_UTENTE)
+    @Secured({ROLE_UTENTE})
     public AssignedTaskListDTO getAssignedTasks() {
         AssignedTaskListDTO assignedTaskListDTO = assignedTaskService.getAssignedTasks();
 
@@ -41,7 +41,7 @@ public class AssignedTaskController {
     }
 
     @GetMapping(value = "/find")
-    @Secured(ROLE_UTENTE)
+    @Secured({ROLE_UTENTE})
     public AssignedTaskListDTO getAssignedTasksByFilter(@RequestParam(required = false) String id,
                                                         @RequestParam(required = false) String idTask,
                                                         @RequestParam(required = false) Boolean isComplete,

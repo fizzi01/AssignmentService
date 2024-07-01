@@ -30,7 +30,7 @@ public class AssignedResourceController {
     }
 
     @GetMapping(value = "/find/all")
-    @Secured(ROLE_MEMBRO)
+    @Secured({ROLE_MEMBRO})
     public AssignedResourceListDTO getAssignedResources() {
         AssignedResourceListDTO assignedResourceListDTO = assignedResourceService.getAssignedResources();
 
@@ -42,7 +42,7 @@ public class AssignedResourceController {
     }
 
     @GetMapping(value = "/find")
-    @Secured(ROLE_MEMBRO)
+    @Secured({ROLE_MEMBRO})
     public AssignedResourceListDTO getAssignedResourcesByFilter(@RequestParam(required = false) String id,
                                                                 @RequestParam(required = false) String hardwareId,
                                                                 @RequestParam(required = false) Double assignedSingleScore,

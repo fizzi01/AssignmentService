@@ -35,8 +35,8 @@ public class PayloadController {
 
     //Richiesta da chiamare quando il payload si avvia, la richiesta contiene l'id del membro
     @PostMapping(value="/resource/update")
-    @Secured(ROLE_MEMBRO)
-    public AssignedResourceDTO startAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
+    @Secured({ROLE_MEMBRO})
+    public PayloadRequestDTO startAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
 
         if (payloadRequestDTO.getAssignedResourceId() == null || payloadRequestDTO.getMemberEmail() == null) {
             throw new WrongPayloadRequest("Assignment id and member email must be provided");
@@ -50,7 +50,6 @@ public class PayloadController {
         }
 
         AssignedResource assignedResourceToUpdate = assignedResource.get();
-        AssignedResourceDTO assignedResourceDTO = new AssignedResourceDTO();
 
         //Security check
         Optional<Resource> checkRes = allocationService.getResource(assignedResourceToUpdate.getHardwareId());
@@ -87,9 +86,7 @@ public class PayloadController {
                 allocationService.updateTaskAssignment(taskAssignmentNew);
                 allocationService.updateAssignedResource(assignedResourceToUpdate);
 
-                assignedResourceDTO.setAssignedTime(assignedResourceToUpdate.getAssignedTime());
-
-                return assignedResourceDTO;
+                return payloadRequestDTO;
             } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
                 //Aggiorno il tempo di fine
                 try {
@@ -108,9 +105,7 @@ public class PayloadController {
                 allocationService.updateTaskAssignment(taskAssignmentNew);
                 allocationService.updateAssignedResource(assignedResourceToUpdate);
 
-                assignedResourceDTO.setCompletedTime(assignedResourceToUpdate.getCompletedTime());
-
-                return assignedResourceDTO;
+                return payloadRequestDTO;
             } else {
                 throw new WrongPayloadRequest("Start or stop must be provided");
             }
@@ -129,7 +124,7 @@ public class PayloadController {
      * @return Ritorna una lista con il nome di tutte le risorse (non deallocate) assegnate alla task
      */
     @PostMapping(value="/resource/info")
-    @Secured(ROLE_MEMBRO)
+    @Secured({ROLE_MEMBRO})
     public PayloadResponseDTO getAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
 
         if ( payloadRequestDTO.getAssignedResourceId() == null || payloadRequestDTO.getMemberEmail() == null ) {
