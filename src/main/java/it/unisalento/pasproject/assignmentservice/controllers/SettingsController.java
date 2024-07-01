@@ -1,13 +1,11 @@
 package it.unisalento.pasproject.assignmentservice.controllers;
 
 import it.unisalento.pasproject.assignmentservice.business.CheckOutUtils;
+import it.unisalento.pasproject.assignmentservice.domain.Settings;
 import it.unisalento.pasproject.assignmentservice.dto.SettingsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static it.unisalento.pasproject.assignmentservice.security.SecurityConstants.ROLE_ADMIN;
 
@@ -30,7 +28,10 @@ public class SettingsController {
 
     @PutMapping("/set")
     @Secured({ROLE_ADMIN})
-    public SettingsDTO setSettings(SettingsDTO settingsDTO) {
-        return checkOutUtils.getSettingsDTO(checkOutUtils.setSettings(checkOutUtils.getSettingsFromDTO(settingsDTO)));
+    public SettingsDTO setSettings(@RequestBody SettingsDTO settingsDTO) {
+        Settings settings = checkOutUtils.getSettingsFromDTO(settingsDTO);
+        settings = checkOutUtils.setSettings(settings);
+
+        return checkOutUtils.getSettingsDTO(settings);
     }
 }
