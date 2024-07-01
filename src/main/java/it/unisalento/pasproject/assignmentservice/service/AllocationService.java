@@ -327,7 +327,7 @@ public class AllocationService {
         sendNotificationRequest(
                 resource.getMemberEmail(),
                 "Resource assignment",
-                "The " + resource.getName() + " has been assigned with ID: " + assignedResource.getId() + "and is now in use",
+                "The " + resource.getName() + " has been assigned with ID: " + assignedResource.getId() + " and is now in use",
                 "",
                 SUCCESS_NOTIFICATION_TYPE,
                 false,
