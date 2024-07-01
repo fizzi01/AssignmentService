@@ -61,7 +61,7 @@ public class AssignmentWatcher {
 
         //Prende tutte le risorse che sono isAvailable=false e controlla se il TaskAssignment a cui sono associate sia completed
         //Se completed le dealloca
-        allocationService.getAssignedResources().forEach(resource -> {
+        allocationService.getNotAssignableResources().forEach(resource -> {
             LOGGER.info("Checking resource availability {}", resource.getId());
             TaskAssignment taskAssignment = allocationService.getActiveTaskAssignment(resource);
 

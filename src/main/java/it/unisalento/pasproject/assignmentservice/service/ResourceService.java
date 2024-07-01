@@ -18,7 +18,11 @@ public class ResourceService {
         Optional.ofNullable(resourceMessageDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceMessageDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceMessageDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
-        Optional.ofNullable(resourceMessageDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        //Optional.ofNullable(resourceMessageDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        Optional.ofNullable(resourceMessageDTO.getStatus())
+                .map(Enum::name)
+                .map(Resource.Status::valueOf)
+                .ifPresent(resource::setStatus);
         Optional.ofNullable(resourceMessageDTO.getCurrentTaskId()).ifPresent(resource::setCurrentTaskId);
         Optional.of(resourceMessageDTO.getSingleCoreScore()).ifPresent(resource::setSingleCoreScore);
         Optional.of(resourceMessageDTO.getMulticoreScore()).ifPresent(resource::setMulticoreScore);
@@ -34,7 +38,11 @@ public class ResourceService {
         Optional.ofNullable(resourceMessageDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceMessageDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceMessageDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
-        Optional.ofNullable(resourceMessageDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        //Optional.ofNullable(resourceMessageDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        Optional.ofNullable(resourceMessageDTO.getStatus())
+                .map(Enum::name)
+                .map(Resource.Status::valueOf)
+                .ifPresent(resource::setStatus);
         Optional.ofNullable(resourceMessageDTO.getCurrentTaskId()).ifPresent(resource::setCurrentTaskId);
         Optional.of(resourceMessageDTO.getSingleCoreScore()).ifPresent(resource::setSingleCoreScore);
         Optional.of(resourceMessageDTO.getMulticoreScore()).ifPresent(resource::setMulticoreScore);
@@ -52,7 +60,11 @@ public class ResourceService {
         Optional.ofNullable(resource.getAvailability()).ifPresent(resourceDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceDTO::setMemberEmail);
-        Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceDTO::setIsAvailable);
+        //Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceDTO::setIsAvailable);
+        Optional.ofNullable(resource.getStatus())
+                .map(Enum::name)
+                .map(ResourceDTO.Status::valueOf)
+                .ifPresent(resourceDTO::setStatus);
         Optional.ofNullable(resource.getCurrentTaskId()).ifPresent(resourceDTO::setCurrentTaskId);
         Optional.of(resource.getSingleCoreScore()).ifPresent(resourceDTO::setSingleCoreScore);
         Optional.of(resource.getMulticoreScore()).ifPresent(resourceDTO::setMulticoreScore);

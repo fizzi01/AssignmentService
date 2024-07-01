@@ -11,13 +11,20 @@ import java.util.List;
 @Getter
 @Setter
 public class ResourceDTO {
+    public enum Status {
+        AVAILABLE,
+        BUSY,
+        UNAVAILABLE
+    }
+
     private String id;
     private String name;
     @JsonDeserialize(using = AvailabilityDeserializer.class)
     private List<Availability> availability;
     private double kWh;
     private String memberEmail;
-    private Boolean isAvailable;
+    //private Boolean isAvailable;
+    private Status status;
     private String currentTaskId;
     private double singleCoreScore;
     private double multicoreScore;

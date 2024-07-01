@@ -65,7 +65,8 @@ public class AllocationAlgorithm {
                 if (isSuitableResource(task, resource, totalComputingPower)) {
                     LOGGER.debug("Assigning resource {} to task {}", resource.getId(), task.getId());
                     // Assegna la risorsa alla task
-                    resource.setIsAvailable(false);
+                    //resource.setIsAvailable(false);
+                    resource.setStatus(Resource.Status.BUSY);
                     resource.setCurrentTaskId(task.getId());
                     allocationService.updateResource(resource);
 
@@ -163,7 +164,10 @@ public class AllocationAlgorithm {
         LOGGER.debug("Current computational power: {}", currentComputingPower);
         LOGGER.debug("Checking if is available");
         // Verifica se la risorsa è disponibile
-        if (Boolean.FALSE.equals(resource.getIsAvailable())) {
+        /*if (Boolean.FALSE.equals(resource.getIsAvailable())) {
+            return false;
+        }*/
+        if (Resource.Status.BUSY.equals(resource.getStatus()) || Resource.Status.UNAVAILABLE.equals(resource.getStatus())) {
             return false;
         }
 

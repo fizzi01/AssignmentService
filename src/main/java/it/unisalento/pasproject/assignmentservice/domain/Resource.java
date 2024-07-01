@@ -11,6 +11,12 @@ import java.util.List;
 @Setter
 @Document(collection = "resource")
 public class Resource {
+    public enum Status {
+        AVAILABLE,
+        BUSY,
+        UNAVAILABLE
+    }
+
     @Id
     private String id;
     private String idResource;
@@ -21,7 +27,7 @@ public class Resource {
     private String memberEmail;
 
     // Campi da aggiornare in base all'assegnazione
-    private Boolean isAvailable;
+    private Status status;
     private String currentTaskId;
 
     private double singleCoreScore;

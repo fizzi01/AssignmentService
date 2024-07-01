@@ -2,7 +2,6 @@ package it.unisalento.pasproject.assignmentservice.service;
 
 import it.unisalento.pasproject.assignmentservice.business.CheckOutUtils;
 import it.unisalento.pasproject.assignmentservice.domain.*;
-import it.unisalento.pasproject.assignmentservice.dto.NotificationMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.resource.ResourceStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.dto.task.TaskStatusMessageDTO;
 import it.unisalento.pasproject.assignmentservice.exceptions.AssignedResourceNotFoundException;
@@ -76,7 +75,8 @@ public class AllocationService {
         DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
         LocalTime currentTime = LocalTime.now();
 
-        List<Resource> availableResources = resourceRepository.findByIsAvailableTrue();
+        //List<Resource> availableResources = resourceRepository.findByIsAvailableTrue();
+        List<Resource> availableResources = resourceRepository.findByStatus(Resource.Status.AVAILABLE);
 
         availableResources = availableResources.stream()
                 .filter(resource -> resource.getAvailability().stream()
@@ -227,7 +227,10 @@ public class AllocationService {
     }
 
     public void deallocateResource(Resource resource) {
-        resource.setIsAvailable(true);
+        //resource.setIsAvailable(true);
+        if (resource.getStatus().equals(Resource.Status.BUSY))
+            resource.setStatus(Resource.Status.AVAILABLE);
+
         resource.setCurrentTaskId(null);
         resourceRepository.save(resource);
         sendResourceStatusMessage(resource);
@@ -345,7 +348,8 @@ public class AllocationService {
         // Creazione di un oggetto ResourceMessageDTO
         ResourceStatusMessageDTO resourceStatusMessageDTO = new ResourceStatusMessageDTO();
         resourceStatusMessageDTO.setId(resource.getId());
-        resourceStatusMessageDTO.setIsAvailable(resource.getIsAvailable());
+        //resourceStatusMessageDTO.setIsAvailable(resource.getIsAvailable());
+        resourceStatusMessageDTO.setStatus(ResourceStatusMessageDTO.Status.valueOf(resource.getStatus().name()));
         resourceStatusMessageDTO.setCurrentTaskId(resource.getCurrentTaskId());
 
         if (resource.getCurrentTaskId() != null) {
@@ -360,7 +364,7 @@ public class AllocationService {
             sendNotificationRequest(
                     resource.getMemberEmail(),
                     "Resource assignment",
-                    "Resource " + assignedResourceId + " has been assigned and is now in use",
+                    "The " + resource.getName() + " has been assigned with ID: " + assignedResourceId + "and is now in use",
                     "",
                     SUCCESS_NOTIFICATION_TYPE,
                     false,
@@ -372,7 +376,7 @@ public class AllocationService {
             sendNotificationRequest(
                     resource.getMemberEmail(),
                     "Resource deallocation",
-                    "Resource " + resource.getId() + " has been deallocated and is now available",
+                    "The " + resource.getName() + " has been deallocated and is now available",
                     "",
                     SUCCESS_NOTIFICATION_TYPE,
                     false,
@@ -463,8 +467,21 @@ public class AllocationService {
         }
     }
 
-    public List<Resource> getAssignedResources() {
-        return resourceRepository.findByIsAvailableFalse();
+    //TODO: VEDERE SE FUNZIONA
+    public List<Resource> getNotAssignableResources() {
+        //return resourceRepository.findByIsAvailableFalse();
+        List<Resource> busyResources = resourceRepository.findByStatus(Resource.Status.BUSY);
+        List<Resource> unavailableResources = resourceRepository.findByStatus(Resource.Status.UNAVAILABLE);
+        List<Resource> all = new ArrayList<>();
+
+        try {
+            all.addAll(busyResources);
+            all.addAll(unavailableResources);
+        } catch (Exception e) {
+            LOGGER.info("No resources assigned");
+        }
+
+        return all;
     }
 
     public void updateAssignedResource(AssignedResource assignedResource) {
