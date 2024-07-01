@@ -26,22 +26,10 @@ public class RabbitMQConfig {
     private String securityRequestRoutingKey;
 
     @Bean
-    public Queue securityResponseQueue() {
-        return new Queue(securityResponseQueue);
-    }
-
-    @Bean
     public TopicExchange securityExchange() {
         return new TopicExchange(securityExchange);
     }
 
-    @Bean
-    public Binding securityBinding() {
-        return BindingBuilder
-                .bind(securityResponseQueue())
-                .to(securityExchange())
-                .with(securityRequestRoutingKey);
-    }
 
     // ------  END SECURITY  ------ //
 
