@@ -322,6 +322,8 @@ public class AllocationService {
 
         assignedResource.setTaskAssignmentId(taskAssignment.getId());
 
+        assignedResource = assignedResourceRepository.save(assignedResource);
+
         sendNotificationRequest(
                 resource.getMemberEmail(),
                 "Resource assignment",
@@ -360,6 +362,8 @@ public class AllocationService {
         //resourceStatusMessageDTO.setIsAvailable(resource.getIsAvailable());
         resourceStatusMessageDTO.setStatus(ResourceStatusMessageDTO.Status.valueOf(resource.getStatus().name()));
         resourceStatusMessageDTO.setCurrentTaskId(resource.getCurrentTaskId());
+
+        LOGGER.info("Message to Resource with STATUS: " + resourceStatusMessageDTO.getStatus());
 
         if (resource.getCurrentTaskId() != null) {
 
