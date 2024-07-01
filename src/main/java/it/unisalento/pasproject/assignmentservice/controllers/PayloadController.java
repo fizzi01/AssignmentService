@@ -86,6 +86,8 @@ public class PayloadController {
                 allocationService.updateTaskAssignment(taskAssignmentNew);
                 allocationService.updateAssignedResource(assignedResourceToUpdate);
 
+                allocationService.sendAssignmentData(assignedResourceToUpdate, checkRes.get());
+
                 return payloadRequestDTO;
             } else if(payloadRequestDTO.getStop() != null && payloadRequestDTO.getStop()) {
                 //Aggiorno il tempo di fine
@@ -109,7 +111,6 @@ public class PayloadController {
             } else {
                 throw new WrongPayloadRequest("Start or stop must be provided");
             }
-
 
         } else {
             throw new WrongPayloadRequest("Task assignment not found");

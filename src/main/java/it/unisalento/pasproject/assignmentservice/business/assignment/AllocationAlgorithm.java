@@ -83,8 +83,8 @@ public class AllocationAlgorithm {
 
                     taskAssignment = allocationService.updateTaskAssignment(taskAssignment);
 
-                    // Notifica l'aggiornamento
-                    allocationService.sendAssignmentData(assigned, resource);
+                    // Notifica l'aggiornamento (Moved to PayloadController)
+                    //allocationService.sendAssignmentData(assigned, resource);
 
                     LOGGER.debug("Resource {} assigned to task {}", resource.getId(), task.getId());
 
