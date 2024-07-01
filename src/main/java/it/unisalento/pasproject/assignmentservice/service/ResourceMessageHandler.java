@@ -25,8 +25,8 @@ public class ResourceMessageHandler {
     @Value("${rabbitmq.routing.resourcedeallocation.key}")
     private String resourceDeallocationTopic;
 
-    @Value("${rabbitmq.exchange.data.name}")
-    private String dataExchange;
+    @Value("${rabbitmq.exchange.resource.name}")
+    private String resourceExchange;
 
     private final ResourceService resourceService;
     private final MessageProducer messageProducer;
@@ -55,11 +55,11 @@ public class ResourceMessageHandler {
     }
 
     public void handleResourceAssignment(ResourceStatusMessageDTO message) {
-        messageProducer.sendMessage(message, resourceAssignedTopic, dataExchange);
+        messageProducer.sendMessage(message, resourceAssignedTopic, resourceExchange);
 
     }
 
     public void handleResourceDeallocation(ResourceStatusMessageDTO message) {
-       messageProducer.sendMessage(message, resourceDeallocationTopic, dataExchange);
+       messageProducer.sendMessage(message, resourceDeallocationTopic, resourceExchange);
     }
 }

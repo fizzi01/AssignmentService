@@ -93,18 +93,6 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing.newresource.key}")
     private String newResourceTopic;
 
-    @Value("${rabbitmq.queue.resourceassignment.name}")
-    private String resourceAssignmentQueue;
-
-    @Value("${rabbitmq.routing.resourceassignment.key}")
-    private String resourceAssignmentTopic;
-
-    @Value("${rabbitmq.queue.resourcedeallocation.name}")
-    private String resourceUsageQueue;
-
-    @Value("${rabbitmq.routing.resourcedeallocation.key}")
-    private String resourceUsageTopic;
-
     // Others queues and topics for resource messages
 
     @Value("${rabbitmq.exchange.resource.name}")
@@ -113,16 +101,6 @@ public class RabbitMQConfig {
     @Bean
     public Queue newResourceQueue() {
         return new Queue(newResourceQueue);
-    }
-
-    @Bean
-    public Queue resourceAssignmentQueue() {
-        return new Queue(resourceAssignmentQueue);
-    }
-
-    @Bean
-    public Queue resourceUsageQueue() {
-        return new Queue(resourceUsageQueue);
     }
 
     @Bean
@@ -136,22 +114,6 @@ public class RabbitMQConfig {
                 .bind(newResourceQueue())
                 .to(resourceDataExchange())
                 .with(newResourceTopic);
-    }
-
-    @Bean
-    public Binding resourceAssignmentBinding() {
-        return BindingBuilder
-                .bind(resourceAssignmentQueue())
-                .to(resourceDataExchange())
-                .with(resourceAssignmentTopic);
-    }
-
-    @Bean
-    public Binding resourceUsageBinding() {
-        return BindingBuilder
-                .bind(resourceUsageQueue())
-                .to(resourceDataExchange())
-                .with(resourceUsageTopic);
     }
 
     // ------  END RESOURCE MESSAGES  ------ //
