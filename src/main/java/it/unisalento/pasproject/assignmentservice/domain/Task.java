@@ -88,6 +88,8 @@ public class Task {
      */
     private Boolean enabled;
 
+    private String scriptLink;
+
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 

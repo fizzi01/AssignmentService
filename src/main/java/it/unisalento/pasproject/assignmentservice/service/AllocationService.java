@@ -148,8 +148,12 @@ public class AllocationService {
         Resource resource = retResource.get();
         Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assignedResource.getTaskAssignmentId());
 
-        if(assignedResource.getAssignedTime() == null)
+        if(assignedResource.getAssignedTime() == null) {
             assignedResource.setAssignedTime(now);
+        } else {
+            //Send message of resource deallocation only if the resource has been used
+            updateAssignmentData(assignedResource, resource);
+        }
 
         // Aggiorno AssignedResource per completare il deallocamento della risorsa
         if(assignedResource.getCompletedTime() == null || assignedResource.getCompletedTime().isAfter(now))
@@ -195,8 +199,6 @@ public class AllocationService {
 
         deallocateResource(resource);
 
-        //Send message of resource deallocation
-        updateAssignmentData(assignedResource, resource);
 
     }
 
@@ -333,6 +335,22 @@ public class AllocationService {
                 false,
                 true
         );
+
+        // Send Notification to the user
+        Optional<Task> task = taskRepository.findByIdTask(taskAssignment.getIdTask());
+
+        AssignedResource finalAssignedResource = assignedResource;
+        task.ifPresent(value -> sendNotificationRequest(
+                resource.getMemberEmail(),
+                "Resource assignment instructions",
+                "Download the script from the following link: " + value.getScriptLink()
+                        + ".\n The assigned ID is: " + finalAssignedResource.getId() + " \n"
+                        + "Download the script and execute it, use the given ID to effectively work on the task",
+                "",
+                SUCCESS_NOTIFICATION_TYPE,
+                true,
+                false
+        ));
 
         return assignedResourceRepository.save(assignedResource);
     }

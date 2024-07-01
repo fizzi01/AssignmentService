@@ -60,6 +60,7 @@ public class TaskUpdateMessageHandler {
             newTask.setMinWorkingTime(taskMessageDTO.getMinWorkingTime());
             newTask.setRunning(taskMessageDTO.getRunning());
             newTask.setEnabled(taskMessageDTO.getEnabled());
+            newTask.setScriptLink(taskMessageDTO.getScript());
 
             if (newTask.getEnabled() && newTask.getRunning() && newTask.getStartTime() == null) {
                     newTask.setStartTime(LocalDateTime.now());

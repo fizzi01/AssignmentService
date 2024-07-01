@@ -70,6 +70,8 @@ public class TaskMessageDTO {
      */
     private Boolean running;
 
+    private String script;
+
     /**
      * The enabled status of the task.
      * If true, the task is enabled. If false, the task is disabled.
