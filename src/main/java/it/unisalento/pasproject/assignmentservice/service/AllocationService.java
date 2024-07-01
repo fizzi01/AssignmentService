@@ -330,7 +330,7 @@ public class AllocationService {
                 resource.getMemberEmail(),
                 "Resource assignment",
                 "The " + resource.getName() + " has been assigned with ID: " + assignedResource.getId() + " and is now in use",
-                "",
+                null,
                 SUCCESS_NOTIFICATION_TYPE,
                 false,
                 true
@@ -346,7 +346,7 @@ public class AllocationService {
                 "Download the script from the following link: " + value.getScriptLink()
                         + ".\n The assigned ID is: " + finalAssignedResource.getId() + " \n"
                         + "Download the script and execute it, use the given ID to effectively work on the task",
-                "",
+                null,
                 SUCCESS_NOTIFICATION_TYPE,
                 true,
                 false
