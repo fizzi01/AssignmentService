@@ -322,6 +322,16 @@ public class AllocationService {
 
         assignedResource.setTaskAssignmentId(taskAssignment.getId());
 
+        sendNotificationRequest(
+                resource.getMemberEmail(),
+                "Resource assignment",
+                "The " + resource.getName() + " has been assigned with ID: " + assignedResource.getId() + "and is now in use",
+                "",
+                SUCCESS_NOTIFICATION_TYPE,
+                false,
+                true
+        );
+
         return assignedResourceRepository.save(assignedResource);
     }
 
@@ -343,33 +353,17 @@ public class AllocationService {
         return assignedResourceRepository.findByHardwareIdAndTaskAssignmentId(resource.getId(), taskAssignment.getId());
     }
 
-    //TODO: VEDERE SE VA BENE
     public void sendResourceStatusMessage(Resource resource) {
         // Creazione di un oggetto ResourceMessageDTO
         ResourceStatusMessageDTO resourceStatusMessageDTO = new ResourceStatusMessageDTO();
-        resourceStatusMessageDTO.setId(resource.getId());
+        resourceStatusMessageDTO.setId(resource.getIdResource());
         //resourceStatusMessageDTO.setIsAvailable(resource.getIsAvailable());
         resourceStatusMessageDTO.setStatus(ResourceStatusMessageDTO.Status.valueOf(resource.getStatus().name()));
         resourceStatusMessageDTO.setCurrentTaskId(resource.getCurrentTaskId());
 
         if (resource.getCurrentTaskId() != null) {
-            Optional<AssignedResource> assignedResource = assignedResourceRepository.findByHardwareId(resource.getId());
-
-            if (assignedResource.isEmpty())
-                throw new AssignedResourceNotFoundException("Assigned resource with hardware id " + resource.getIdResource() + " not found");
-
-            String assignedResourceId = assignedResource.get().getId();
 
             resourcesMessageHandler.handleResourceAssignment(resourceStatusMessageDTO);
-            sendNotificationRequest(
-                    resource.getMemberEmail(),
-                    "Resource assignment",
-                    "The " + resource.getName() + " has been assigned with ID: " + assignedResourceId + "and is now in use",
-                    "",
-                    SUCCESS_NOTIFICATION_TYPE,
-                    false,
-                    true
-            );
         }
         else {
             resourcesMessageHandler.handleResourceDeallocation(resourceStatusMessageDTO);

@@ -33,7 +33,7 @@ public class AssignmentWatcher {
     //Prende tutti i membri assegnati e controlla se sono completati
     private static final Logger LOGGER = LoggerFactory.getLogger(AssignmentWatcher.class);
 
-    @Scheduled(fixedRate = 60000) // esegue ogni minuto
+    @Scheduled(fixedRate = 10000) // esegue ogni minuto
     public void watch() {
         //Prende tutte le Task che sono in running e che sono enabled
         allocationService.getRunningTasks().forEach(task -> {
