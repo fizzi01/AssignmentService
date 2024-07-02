@@ -122,6 +122,7 @@ public class AnalyticsMessageHandler {
     public static AssignedAnalyticsDTO getAssignedAnalyticsDTO(TaskAssignment taskAssignmentEntity, Task task){
         LocalDateTime now = LocalDateTime.now();
         AssignedAnalyticsDTO assignedAnalyticsDTO = new AssignedAnalyticsDTO();
+        assignedAnalyticsDTO.setId(taskAssignmentEntity.getId());
         assignedAnalyticsDTO.setTaskId(task.getIdTask());
         assignedAnalyticsDTO.setCompletedTime(taskAssignmentEntity.getCompletedTime());
         assignedAnalyticsDTO.setLastUpdate(now);
