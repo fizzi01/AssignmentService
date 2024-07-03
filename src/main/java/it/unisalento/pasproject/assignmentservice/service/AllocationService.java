@@ -252,6 +252,9 @@ public class AllocationService {
 
         //Send Assignment data
         updateTaskAssignment(taskAssignment);
+
+        //Send Analytics data
+        updateAssignmentData(taskAssignment);
     }
 
     public void completeTaskAssignment(TaskAssignment taskAssignment){
