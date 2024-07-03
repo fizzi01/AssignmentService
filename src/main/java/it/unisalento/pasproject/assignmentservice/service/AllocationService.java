@@ -148,12 +148,6 @@ public class AllocationService {
         Resource resource = retResource.get();
         Optional<TaskAssignment> taskAssignment = taskAssignmentRepository.findById(assignedResource.getTaskAssignmentId());
 
-        if(assignedResource.getAssignedTime() == null) {
-            assignedResource.setAssignedTime(now);
-        } else {
-            //Send message of resource deallocation only if the resource has been used
-            updateAssignmentData(assignedResource, resource);
-        }
 
         // Aggiorno AssignedResource per completare il deallocamento della risorsa
         if(assignedResource.getCompletedTime() == null || assignedResource.getCompletedTime().isAfter(now))
@@ -168,6 +162,13 @@ public class AllocationService {
         } else {
             assignedResource.setCompletedTime(now);
             assignedResource.setHasCompleted(true);
+        }
+
+        if(assignedResource.getAssignedTime() == null) {
+            assignedResource.setAssignedTime(now);
+        } else {
+            //Send message of resource deallocation only if the resource has been used
+            updateAssignmentData(assignedResource, resource);
         }
 
         //Aggiorno TaskAssignment per completare il deallocamento della risorsa
@@ -274,10 +275,12 @@ public class AllocationService {
             assignment.setIsComplete(false);
             assignment.setAssignedResources(List.of());
 
+            assignment= taskAssignmentRepository.save(assignment);
+
             // Send Assignment data
             sendAssignmentData(assignment);
 
-            return taskAssignmentRepository.save(assignment);
+            return assignment;
         }
 
         return assignment;

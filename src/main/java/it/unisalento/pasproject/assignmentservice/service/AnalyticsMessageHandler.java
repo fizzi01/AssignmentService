@@ -124,6 +124,14 @@ public class AnalyticsMessageHandler {
         AssignedAnalyticsDTO assignedAnalyticsDTO = new AssignedAnalyticsDTO();
         assignedAnalyticsDTO.setId(taskAssignmentEntity.getId());
         assignedAnalyticsDTO.setTaskId(task.getIdTask());
+
+        // Set assigned time only if the task is not completed
+        if(task.getStartTime() != null) {
+            assignedAnalyticsDTO.setAssignedTime(task.getStartTime());
+        } else{
+            assignedAnalyticsDTO.setAssignedTime(now);
+        }
+
         assignedAnalyticsDTO.setCompletedTime(taskAssignmentEntity.getCompletedTime());
         assignedAnalyticsDTO.setLastUpdate(now);
         assignedAnalyticsDTO.setComplete(taskAssignmentEntity.getIsComplete());
