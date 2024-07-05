@@ -138,6 +138,7 @@ public class AnalyticsMessageHandler {
 
         assignedAnalyticsDTO.setEmailUtente(task.getEmailUtente());
 
+        LOGGER.debug("AssignedAnalytics time: {}", taskAssignmentEntity.getCompletedTime());
 
         return assignedAnalyticsDTO;
     }
@@ -161,6 +162,8 @@ public class AnalyticsMessageHandler {
         assignedResourceAnalyticsDTO.setCompletedTime(assignedResource.getCompletedTime());
         assignedResourceAnalyticsDTO.setHasCompleted(assignedResource.isHasCompleted());
         assignedResourceAnalyticsDTO.setLastUpdate(now);
+
+        LOGGER.debug("AssignedAnalytics time: {}", taskAssignment.getCompletedTime());
 
         return assignedResourceAnalyticsDTO;
     }

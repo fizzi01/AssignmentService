@@ -261,6 +261,9 @@ public class AllocationService {
         taskAssignment.setIsComplete(true);
         taskAssignment.setCompletedTime(LocalDateTime.now());
         taskAssignmentRepository.save(taskAssignment);
+
+        //Send Anlytics data
+        updateAssignmentData(taskAssignment);
     }
 
     public TaskAssignment getTaskAssignment(Task task) {
