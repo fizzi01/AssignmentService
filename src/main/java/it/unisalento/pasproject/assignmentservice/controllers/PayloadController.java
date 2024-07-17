@@ -3,11 +3,12 @@ package it.unisalento.pasproject.assignmentservice.controllers;
 import it.unisalento.pasproject.assignmentservice.domain.AssignedResource;
 import it.unisalento.pasproject.assignmentservice.domain.Resource;
 import it.unisalento.pasproject.assignmentservice.domain.TaskAssignment;
-import it.unisalento.pasproject.assignmentservice.dto.resource.AssignedResourceDTO;
 import it.unisalento.pasproject.assignmentservice.dto.payload.PayloadRequestDTO;
 import it.unisalento.pasproject.assignmentservice.dto.payload.PayloadResponseDTO;
 import it.unisalento.pasproject.assignmentservice.exceptions.WrongPayloadRequest;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,8 @@ import static it.unisalento.pasproject.assignmentservice.security.SecurityConsta
 @RestController
 @RequestMapping("/api/tasks/assignments")
 public class PayloadController {
-
     private final AllocationService allocationService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PayloadController.class);
 
     public PayloadController(AllocationService allocationService) {
         this.allocationService = allocationService;
@@ -37,7 +38,6 @@ public class PayloadController {
     @PostMapping(value="/resource/update")
     @Secured({ROLE_MEMBRO})
     public PayloadRequestDTO startAssignment(@RequestBody PayloadRequestDTO payloadRequestDTO) {
-
         if (payloadRequestDTO.getAssignedResourceId() == null || payloadRequestDTO.getMemberEmail() == null) {
             throw new WrongPayloadRequest("Assignment id and member email must be provided");
         }
@@ -53,6 +53,7 @@ public class PayloadController {
 
         //Security check
         Optional<Resource> checkRes = allocationService.getResource(assignedResourceToUpdate.getHardwareId());
+
         if(checkRes.isEmpty()) {
             throw new WrongPayloadRequest("Resource not found");
         }
@@ -63,6 +64,7 @@ public class PayloadController {
 
         Optional<TaskAssignment> taskAssignment = allocationService.getTaskAssignment(assignedResourceToUpdate.getTaskAssignmentId());
         if (taskAssignment.isPresent()) {
+
             TaskAssignment taskAssignmentNew = taskAssignment.get();
             List<AssignedResource> assignedResources = new ArrayList<>(taskAssignmentNew.getAssignedResources());
 
@@ -115,9 +117,6 @@ public class PayloadController {
         } else {
             throw new WrongPayloadRequest("Task assignment not found");
         }
-
-
-
     }
 
     /**

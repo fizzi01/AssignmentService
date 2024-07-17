@@ -531,8 +531,8 @@ public class AllocationService {
     }
 
     public void sendNotificationRequest(String receiver, String subject, String message, String attachment, String type, boolean isEmail, boolean isNotification) {
-        notificationMessageHandler.sendNotificationMessage(NotificationMessageHandler
-                .buildNotificationMessage(
+        notificationMessageHandler.sendNotificationMessage(
+                NotificationMessageHandler.buildNotificationMessage(
                         receiver,
                         message,
                         subject,

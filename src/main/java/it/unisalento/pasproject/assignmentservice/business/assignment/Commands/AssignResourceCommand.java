@@ -1,6 +1,5 @@
 package it.unisalento.pasproject.assignmentservice.business.assignment.Commands;
 
-import it.unisalento.pasproject.assignmentservice.business.assignment.AllocationAlgorithm;
 import it.unisalento.pasproject.assignmentservice.domain.*;
 import it.unisalento.pasproject.assignmentservice.service.AllocationService;
 import org.slf4j.Logger;
@@ -11,11 +10,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static it.unisalento.pasproject.assignmentservice.business.assignment.AssignmentConstants.CUDA_THRESHOLD;
 import static it.unisalento.pasproject.assignmentservice.business.assignment.AssignmentConstants.POWER_THRESHOLD;
 
-public class AssignResourceCommand implements Command{
+public class AssignResourceCommand implements Command {
     private final Task task;
     private final List<Resource> resources;
     private final AllocationService allocationService;
@@ -24,7 +24,6 @@ public class AssignResourceCommand implements Command{
     private double totalCudaPower;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AssignResourceCommand.class);
-
 
     public AssignResourceCommand(Task task, List<Resource> resources, AllocationService allocationService) {
         this.task = task;
@@ -52,7 +51,7 @@ public class AssignResourceCommand implements Command{
         }
     }
 
-    private boolean shouldSkipResource(Resource resource) {
+    public boolean shouldSkipResource(Resource resource) {
         if (isAlreadyAssigned(taskAssignment.getAssignedResources(), resource)) {
             LOGGER.debug("Resource {} already assigned to task {}", resource.getId(), task.getId());
             return true;
@@ -72,14 +71,16 @@ public class AssignResourceCommand implements Command{
     }
 
     private boolean hasReachedMaxComputingPower() {
-        return task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0;
+        //return task.getMaxComputingPower() - totalComputingPower < POWER_THRESHOLD && task.getMaxComputingPower() > 0.0;
+        return task.getMaxComputingPower() - totalComputingPower == 0.0 && task.getMaxComputingPower() > 0.0;
     }
 
     private boolean hasReachedMaxCudaPower() {
-        return task.getMaxCudaPower() - totalCudaPower < CUDA_THRESHOLD && task.getMaxCudaPower() > 0.0;
+        //return task.getMaxCudaPower() - totalCudaPower < CUDA_THRESHOLD && task.getMaxCudaPower() > 0.0;
+        return task.getMaxCudaPower() - totalCudaPower == 0.0 && task.getMaxCudaPower() > 0.0;
     }
 
-    private void assignResourceToTask(Resource resource) {
+    public void assignResourceToTask(Resource resource) {
         LOGGER.debug("Assigning resource {} to task {}", resource.getId(), task.getId());
 
         // Assegna la risorsa alla task
@@ -140,13 +141,13 @@ public class AssignResourceCommand implements Command{
         DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
         LocalTime currentTime = LocalTime.now();
 
-        Availability availability = resource.getAvailability().stream()
+        Optional<Availability> availability = resource.getAvailability().stream()
                 .filter(availability1 -> availability1.getDayOfWeek().equals(currentDay) &&
                         !currentTime.isBefore(availability1.getStartTime()) &&
                         !currentTime.isAfter(availability1.getEndTime()))
-                .findFirst().orElseThrow();
+                .findFirst();
 
-        return availability.getEndTime().minusSeconds(availability.getStartTime().toSecondOfDay()).toSecondOfDay() >= task.getTaskDuration();
+        return availability.filter(value -> value.getEndTime().minusSeconds(value.getStartTime().toSecondOfDay()).toSecondOfDay() >= task.getTaskDuration()).isPresent();
     }
 
     public static boolean isAlreadyAssigned(List<AssignedResource> assignedResourceList,Resource resource) {

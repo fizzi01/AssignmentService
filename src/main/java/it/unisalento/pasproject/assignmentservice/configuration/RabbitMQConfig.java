@@ -11,29 +11,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-
-
-    // ------  SECURITY  ------ //
-
-    // Needed by authentication service
-    @Value("${rabbitmq.queue.security.name}")
-    private String securityResponseQueue;
-
-    @Value("${rabbitmq.exchange.security.name}")
-    private String securityExchange;
-
-    @Value("${rabbitmq.routing.security.key}")
-    private String securityRequestRoutingKey;
-
-    @Bean
-    public TopicExchange securityExchange() {
-        return new TopicExchange(securityExchange);
-    }
-
-
-    // ------  END SECURITY  ------ //
-
-
     // ------  TASK MESSAGES  ------ //
 
     @Value("${rabbitmq.queue.newtask.name}")

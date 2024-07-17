@@ -46,7 +46,4 @@ public class AllocationManager {
 
         allocationAlgorithm.assignResources(tasks, resources);
     }
-
-
-
 }
