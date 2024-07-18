@@ -311,11 +311,17 @@ public class AllocationService {
         DayOfWeek currentDay = LocalDateTime.now().getDayOfWeek();
         LocalTime currentTime = LocalTime.now();
 
-        Availability availability = resource.getAvailability().stream()
+        Optional<Availability> availabilityFirst = resource.getAvailability().stream()
                 .filter(availability1 -> availability1.getDayOfWeek().equals(currentDay) &&
                         !currentTime.isBefore(availability1.getStartTime()) &&
                         !currentTime.isAfter(availability1.getEndTime()))
-                .findFirst().orElseThrow();
+                .findFirst();
+
+        if (availabilityFirst.isEmpty()) {
+            throw new AssignedResourceNotFoundException("Resource " + resource.getId() + " is not available at this time");
+        }
+
+        Availability availability = availabilityFirst.get();
 
         AssignedResource assignedResource = new AssignedResource();
 
