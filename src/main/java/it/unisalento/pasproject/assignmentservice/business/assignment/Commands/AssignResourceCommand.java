@@ -188,8 +188,8 @@ public class AssignResourceCommand implements Command {
         LOGGER.debug("Checking if has enough energy");
         LOGGER.debug("Resource energy: {}", resource.getKWh());
         LOGGER.debug("Task energy: {}", task.getMaxEnergyConsumption());
-        //Controllo non si superi la maxEnergyConsumption
-        if (resource.getKWh() > task.getMaxEnergyConsumption()) {
+        //Controllo non si superi la maxEnergyConsumption e che non si scenda sotto la minEnergyConsumption
+        if (resource.getKWh() > task.getMaxEnergyConsumption() || resource.getKWh() < task.getMinEnergyConsumption()) {
             return false;
         }
 

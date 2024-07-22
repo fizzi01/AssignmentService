@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = AssignResourceCommand.class)
-public class AssignResourceCommandTest {
+class AssignResourceCommandTest {
     @MockBean
     private Task task;
 
@@ -172,6 +172,7 @@ public class AssignResourceCommandTest {
 
     @Test
     void assignSingleResourceToTaskSuccessfully() {
+        resource1.setKWh(22.0);
         List<Resource> resources = Collections.singletonList(resource1);
         assignResourceCommand = new AssignResourceCommand(task, resources, allocationService);
 
